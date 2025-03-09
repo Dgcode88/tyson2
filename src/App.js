@@ -440,11 +440,16 @@ const DetailsButton = styled.button`
 `;
 
 const DetailSection = styled.div`
-  margin-top: 15px;
-  padding: 12px;
-  background-color: #1f2937;
-  border-radius: 4px;
-  border-left: 3px solid #ecc94b;
+  margin-top: 20px;
+  border-top: 1px solid rgba(74, 85, 104, 0.5);
+  padding-top: 20px;
+`;
+
+const CategoryTitle = styled.h4`
+  font-size: 18px;
+  color: #38b2ac;
+  margin: 16px 0 8px 0;
+  font-weight: 600;
 `;
 
 const ChecklistItem = styled.div`
@@ -478,30 +483,31 @@ const ChecklistTime = styled.div`
   margin-left: 8px;
 `;
 
-const CategoryTitle = styled.div`
-  font-weight: bold;
-  color: #ecc94b;
-  margin: 16px 0 8px 0;
+const VisualizationScript = styled.div`
+  font-style: italic;
+  background-color: rgba(56, 178, 172, 0.1);
+  padding: 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  line-height: 1.6;
+  border-left: 3px solid #38b2ac;
 `;
 
 const ShoppingCategory = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  background-color: rgba(74, 85, 104, 0.1);
+  padding: 16px;
+  border-radius: 8px;
 `;
 
 const ShoppingItem = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  padding-left: 16px;
-`;
-
-const VisualizationScript = styled.div`
-  background-color: #1f2937;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 12px;
-  border-left: 3px solid #805ad5;
-  font-style: italic;
+  
+  &:hover {
+    color: #ecc94b;
+  }
 `;
 
 const DayInput = styled.input`
@@ -1576,12 +1582,12 @@ function App() {
       { time: "5:30 AM", activity: "Wake up, hydration (16oz water with lemon and Himalayan salt)" },
       { time: "5:45 AM", activity: "Morning supplements: Vitamin D, Fish Oil, Multivitamin (on empty stomach)" },
       { time: "6:00 AM", activity: "Mindset work - visualization, affirmations" },
-      { time: "6:30 AM", activity: "Breakfast" },
+      { time: "6:30 AM", activity: "Breakfast: Protein (eggs/protein shake), complex carbs (oatmeal/sweet potato), healthy fats (avocado/nuts)" },
       { time: "7:00 AM", activity: "Pre-workout supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" },
       { time: "10:00 AM", activity: "Mid-morning protein shake + Digestive enzymes" },
-      { time: "1:00 PM", activity: "Lunch + Zinc supplement (with meal)" },
-      { time: "4:00 PM", activity: "Mid-afternoon snack + Magnesium (with food)" },
-      { time: "7:00 PM", activity: "Dinner" },
+      { time: "1:00 PM", activity: "Lunch: Lean protein (chicken/fish), complex carbs (rice/quinoa), vegetables + Zinc supplement (with meal)" },
+      { time: "4:00 PM", activity: "Mid-afternoon snack: Protein bar or Greek yogurt with berries + Magnesium (with food)" },
+      { time: "7:00 PM", activity: "Dinner: Lean protein (beef/salmon), vegetables, healthy fats (olive oil/nuts)" },
       { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
       { time: "9:30 PM", activity: "Evening recovery protocol" },
       { time: "10:00 PM", activity: "Sleep" },
@@ -1599,24 +1605,27 @@ function App() {
       { time: "9:30 AM", activity: "Rehabilitation exercises" },
     ];
 
-    // Nutrition specific items based on phase
-    const nutritionItems = [];
+    // Phase-specific items
+    const phaseItems = [];
     switch (currentPhase) {
       case 1: // Foundation
-        nutritionItems.push(
-          { time: "3:00 PM", activity: "Electrolyte drink + Vitamin C (between meals)" }
+        phaseItems.push(
+          { time: "3:00 PM", activity: "Electrolyte drink + Vitamin C (between meals)" },
+          { time: "11:00 AM", activity: "Foundation phase snack: Banana with almond butter (focus on nutrient density)" }
         );
         break;
       case 2: // Intensification
-        nutritionItems.push(
+        phaseItems.push(
           { time: "2:30 PM", activity: "Intra-workout nutrition: EAAs, Electrolytes (during intense sessions)" },
-          { time: "5:30 PM", activity: "Pre-dinner supplements: Digestive enzymes (15 min before meal)" }
+          { time: "5:30 PM", activity: "Pre-dinner supplements: Digestive enzymes (15 min before meal)" },
+          { time: "11:30 AM", activity: "Intensification phase meal: Higher carb intake to fuel workouts - rice, potatoes, or pasta" }
         );
         break;
       case 3: // Peak/Maintenance
-        nutritionItems.push(
+        phaseItems.push(
           { time: "11:30 AM", activity: "Pre-lunch supplements: Digestive enzymes (15 min before meal)" },
-          { time: "3:00 PM", activity: "Performance supplements: Beta-Alanine, Citrulline (1 hr before evening session)" }
+          { time: "3:00 PM", activity: "Performance supplements: Beta-Alanine, Citrulline (1 hr before evening session)" },
+          { time: "8:30 AM", activity: "Peak phase nutrition: Protein-focused meal with strategic carb timing before/after workouts" }
         );
         break;
     }
@@ -1627,7 +1636,7 @@ function App() {
     return [
       ...commonItems,
       ...(isTrainingDay ? trainingDayItems : restDayItems),
-      ...nutritionItems,
+      ...phaseItems,
     ].sort((a, b) => {
       const timeA = new Date(`1970/01/01 ${a.time}`);
       const timeB = new Date(`1970/01/01 ${b.time}`);
@@ -1860,66 +1869,58 @@ function App() {
               ))}
             </List>
 
-            <DetailsButton onClick={() => toggleDetails("training")}>
-              {showDetails["training"]
-                ? "Hide Details"
-                : "Show Detailed Instructions"}{" "}
-              {showDetails["training"] ? "▲" : "▼"}
-            </DetailsButton>
+            {/* Show details by default without needing to click */}
+            <DetailSection>
+              <CategoryTitle>Knee Rehabilitation</CategoryTitle>
+              <List>
+                {trainingPlan.details.kneeRehab.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-            {showDetails["training"] && (
-              <DetailSection>
-                <CategoryTitle>Knee Rehabilitation</CategoryTitle>
-                <List>
-                  {trainingPlan.details.kneeRehab.map((item, index) => (
-                    <ListItem key={index}>
-                      <Bullet>•</Bullet>
-                      {item}
-                    </ListItem>
-                  ))}
-                </List>
+              <CategoryTitle>Boxing Technique Development</CategoryTitle>
+              <List>
+                {trainingPlan.details.boxingTechnique.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-                <CategoryTitle>Boxing Technique Development</CategoryTitle>
-                <List>
-                  {trainingPlan.details.boxingTechnique.map((item, index) => (
-                    <ListItem key={index}>
-                      <Bullet>•</Bullet>
-                      {item}
-                    </ListItem>
-                  ))}
-                </List>
+              <CategoryTitle>Conditioning Protocol</CategoryTitle>
+              <List>
+                {trainingPlan.details.conditioning.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-                <CategoryTitle>Conditioning Protocol</CategoryTitle>
-                <List>
-                  {trainingPlan.details.conditioning.map((item, index) => (
-                    <ListItem key={index}>
-                      <Bullet>•</Bullet>
-                      {item}
-                    </ListItem>
-                  ))}
-                </List>
+              <CategoryTitle>Strength Development</CategoryTitle>
+              <List>
+                {trainingPlan.details.strength.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-                <CategoryTitle>Strength Development</CategoryTitle>
-                <List>
-                  {trainingPlan.details.strength.map((item, index) => (
-                    <ListItem key={index}>
-                      <Bullet>•</Bullet>
-                      {item}
-                    </ListItem>
-                  ))}
-                </List>
-
-                <CategoryTitle>Weekly Workout Schedule</CategoryTitle>
-                <List>
-                  {trainingPlan.workoutSchedule.map((item, index) => (
-                    <ListItem key={index}>
-                      <Bullet>•</Bullet>
-                      <strong>{item.day}:</strong> {item.focus}
-                    </ListItem>
-                  ))}
-                </List>
-              </DetailSection>
-            )}
+              <CategoryTitle>Weekly Workout Schedule</CategoryTitle>
+              <List>
+                {trainingPlan.workoutSchedule.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    <strong>{item.day}:</strong> {item.focus}
+                  </ListItem>
+                ))}
+              </List>
+            </DetailSection>
           </Card>
         );
       case "nutrition":
@@ -1940,18 +1941,69 @@ function App() {
               ))}
             </List>
 
-            <DetailsButton onClick={() => toggleDetails("nutrition")}>
-              {showDetails["nutrition"]
-                ? "Hide Details"
-                : "Show Detailed Nutrition Plan"}{" "}
-              {showDetails["nutrition"] ? "▲" : "▼"}
-            </DetailsButton>
+            {/* Show details by default without needing to click */}
+            <DetailSection>
+              <CategoryTitle>Implementation Details</CategoryTitle>
+              <List>
+                {nutritionPlan.details.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-            {showDetails["nutrition"] && (
-              <DetailSection>
-                {/* Nutrition details */}
-              </DetailSection>
-            )}
+              <CategoryTitle>Daily Meal Plan</CategoryTitle>
+              {typeof nutritionPlan.mealPlan === "string" ? (
+                <p>{nutritionPlan.mealPlan}</p>
+              ) : (
+                <>
+                  {nutritionPlan.mealPlan.refeedDay !== undefined && (
+                    <p>
+                      <strong>
+                        {nutritionPlan.mealPlan.refeedDay
+                          ? "REFEED DAY"
+                          : "REGULAR DAY"}
+                      </strong>
+                    </p>
+                  )}
+                  {nutritionPlan.mealPlan.feedingDay !== undefined && (
+                    <p>
+                      <strong>
+                        {nutritionPlan.mealPlan.feedingDay
+                          ? "FEEDING DAY"
+                          : "FASTING DAY"}
+                      </strong>
+                    </p>
+                  )}
+                  {nutritionPlan.mealPlan.refeeding !== undefined && (
+                    <p>
+                      <strong>{nutritionPlan.mealPlan.refeeding}</strong> -{" "}
+                      {nutritionPlan.mealPlan.feedingWindow}
+                    </p>
+                  )}
+                  {nutritionPlan.mealPlan.trainingDay !== undefined && (
+                    <p>
+                      <strong>
+                        {nutritionPlan.mealPlan.trainingDay
+                          ? "TRAINING DAY NUTRITION"
+                          : "REST DAY NUTRITION"}
+                      </strong>
+                    </p>
+                  )}
+                  {nutritionPlan.mealPlan.meals && (
+                    <List>
+                      {nutritionPlan.mealPlan.meals.map((meal, index) => (
+                        <ListItem key={index}>
+                          <Bullet>•</Bullet>
+                          <strong>{meal.time}:</strong> {meal.food}
+                        </ListItem>
+                      ))}
+                    </List>
+                  )}
+                </>
+              )}
+            </DetailSection>
           </Card>
         );
       case "mindset":
@@ -1972,18 +2024,32 @@ function App() {
               ))}
             </List>
 
-            <DetailsButton onClick={() => toggleDetails("mindset")}>
-              {showDetails["mindset"]
-                ? "Hide Details"
-                : "Show Mental Training Details"}{" "}
-              {showDetails["mindset"] ? "▲" : "▼"}
-            </DetailsButton>
+            {/* Show details by default */}
+            <DetailSection>
+              <CategoryTitle>Implementation Steps</CategoryTitle>
+              <List>
+                {mindsetPlan.details.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-            {showDetails["mindset"] && (
-              <DetailSection>
-                {/* Mindset details */}
-              </DetailSection>
-            )}
+              <CategoryTitle>Daily Visualization Script</CategoryTitle>
+              <VisualizationScript>
+                {mindsetPlan.visualizationScript}
+              </VisualizationScript>
+
+              <CategoryTitle>Daily Affirmations</CategoryTitle>
+              <List>
+                {mindsetPlan.affirmations.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>"{item}"
+                  </ListItem>
+                ))}
+              </List>
+            </DetailSection>
           </Card>
         );
       case "supplements":
@@ -2006,18 +2072,40 @@ function App() {
               ))}
             </List>
 
-            <DetailsButton onClick={() => toggleDetails("supplements")}>
-              {showDetails["supplements"]
-                ? "Hide Details"
-                : "Show Supplement Details"}{" "}
-              {showDetails["supplements"] ? "▲" : "▼"}
-            </DetailsButton>
+            {/* Show details by default */}
+            <DetailSection>
+              <CategoryTitle>Exact Dosages</CategoryTitle>
+              <List>
+                {supplementPlan.details.dosage.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-            {showDetails["supplements"] && (
-              <DetailSection>
-                {/* Supplement details */}
-              </DetailSection>
-            )}
+              <CategoryTitle>Timing Strategy</CategoryTitle>
+              <List>
+                {supplementPlan.details.timing.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
+
+              <CategoryTitle>Recommended Brands</CategoryTitle>
+              <List>
+                {supplementPlan.details.brandRecommendations.map(
+                  (item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ListItem>
+                  )
+                )}
+              </List>
+            </DetailSection>
           </Card>
         );
       case "recovery":
@@ -2038,18 +2126,28 @@ function App() {
               ))}
             </List>
 
-            <DetailsButton onClick={() => toggleDetails("recovery")}>
-              {showDetails["recovery"]
-                ? "Hide Details"
-                : "Show Recovery Details"}{" "}
-              {showDetails["recovery"] ? "▲" : "▼"}
-            </DetailsButton>
+            {/* Show details by default */}
+            <DetailSection>
+              <CategoryTitle>Detailed Protocol</CategoryTitle>
+              <List>
+                {recoveryPlan.details.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
 
-            {showDetails["recovery"] && (
-              <DetailSection>
-                {/* Recovery details */}
-              </DetailSection>
-            )}
+              <CategoryTitle>Implementation Steps</CategoryTitle>
+              <List>
+                {recoveryPlan.implementation.map((item, index) => (
+                  <ListItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ListItem>
+                ))}
+              </List>
+            </DetailSection>
           </Card>
         );
       case "shopping":
@@ -2063,7 +2161,44 @@ function App() {
                 {currentPhase}
               </Description>
             </CardHeader>
-            {/* Shopping list content */}
+
+            <ShoppingCategory>
+              <CategoryTitle>Supplements</CategoryTitle>
+              <List>
+                {shoppingList.supplements.map((item, index) => (
+                  <ShoppingItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ShoppingItem>
+                ))}
+              </List>
+            </ShoppingCategory>
+
+            <ShoppingCategory>
+              <CategoryTitle>Groceries</CategoryTitle>
+              <List>
+                {shoppingList.groceries.map((item, index) => (
+                  <ShoppingItem key={index}>
+                    <Bullet>•</Bullet>
+                    {item}
+                  </ShoppingItem>
+                ))}
+              </List>
+            </ShoppingCategory>
+
+            {shoppingList.equipment && (
+              <ShoppingCategory>
+                <CategoryTitle>Equipment</CategoryTitle>
+                <List>
+                  {shoppingList.equipment.map((item, index) => (
+                    <ShoppingItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ShoppingItem>
+                  ))}
+                </List>
+              </ShoppingCategory>
+            )}
           </Card>
         );
       case "checklist":
@@ -2076,7 +2211,35 @@ function App() {
                 Track your daily completion for maximum results
               </Description>
             </CardHeader>
-            {/* Checklist content */}
+
+            {checklistItems.map((item, index) => (
+              <ChecklistItem key={index}>
+                <ChecklistIcon
+                  checked={checklist[item.id]}
+                  onClick={() => toggleChecklistItem(item.id)}
+                >
+                  {checklist[item.id] ? "✓" : "○"}
+                </ChecklistIcon>
+                <ChecklistText checked={checklist[item.id]}>
+                  {item.text}
+                </ChecklistText>
+                <ChecklistTime>{item.time}</ChecklistTime>
+              </ChecklistItem>
+            ))}
+
+            <DetailsButton
+              onClick={() => {
+                // Reset all checklist items
+                const newChecklist = {};
+                checklistItems.forEach((item) => {
+                  newChecklist[item.id] = false;
+                });
+                setChecklist(newChecklist);
+              }}
+              style={{ backgroundColor: "#e53e3e", marginTop: "20px" }}
+            >
+              Reset Checklist
+            </DetailsButton>
           </Card>
         );
       default:
