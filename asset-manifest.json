@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/tyson2/static/js/main.e00751a6.js",
+    "main.js": "/tyson2/static/js/main.dafe85d7.js",
     "index.html": "/tyson2/index.html",
-    "main.e00751a6.js.map": "/tyson2/static/js/main.e00751a6.js.map"
+    "main.dafe85d7.js.map": "/tyson2/static/js/main.dafe85d7.js.map"
   },
   "entrypoints": [
-    "static/js/main.e00751a6.js"
+    "static/js/main.dafe85d7.js"
   ]
 }
