@@ -1808,258 +1808,265 @@ function App() {
   };
 
   const renderTabContent = () => {
-    return (
-      <div>
-        <Tabs>
-          <TabButton
-            active={activeTab === "schedule"}
-            onClick={() => setActiveTab("schedule")}
-          >
-            Schedule
-          </TabButton>
-          <TabButton
-            active={activeTab === "training"}
-            onClick={() => setActiveTab("training")}
-          >
-            Training
-          </TabButton>
-          <TabButton
-            active={activeTab === "nutrition"}
-            onClick={() => setActiveTab("nutrition")}
-          >
-            Nutrition
-          </TabButton>
-          <TabButton
-            active={activeTab === "mindset"}
-            onClick={() => setActiveTab("mindset")}
-          >
-            Mindset
-          </TabButton>
-          <TabButton
-            active={activeTab === "supplements"}
-            onClick={() => setActiveTab("supplements")}
-          >
-            Supplements
-          </TabButton>
-          <TabButton
-            active={activeTab === "recovery"}
-            onClick={() => setActiveTab("recovery")}
-          >
-            Recovery
-          </TabButton>
-          <TabButton
-            active={activeTab === "shoppingList"}
-            onClick={() => setActiveTab("shoppingList")}
-          >
-            Shopping List
-          </TabButton>
-          <TabButton
-            active={activeTab === "checklist"}
-            onClick={() => setActiveTab("checklist")}
-          >
-            Checklist
-          </TabButton>
-        </Tabs>
+    switch (activeTab) {
+      case "schedule":
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Day {currentDay} Schedule</CardTitle>
+              <Description>
+                {currentDay % 7 === 0 ? "REST DAY" : "TRAINING DAY"} Schedule
+                for Phase {currentPhase}
+              </Description>
+            </CardHeader>
+            {getDailySchedule().map((item, index) => (
+              <ScheduleItem key={index}>
+                <Time>{item.time}</Time>
+                <Activity>{item.activity}</Activity>
+              </ScheduleItem>
+            ))}
+          </Card>
+        );
+      case "training":
+        const trainingPlan = getDailyTrainingPlan();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Training Plan</CardTitle>
+              <Description>{trainingPlan.description}</Description>
+            </CardHeader>
+            <SectionTitle>{trainingPlan.title}</SectionTitle>
+            <List>
+              {trainingPlan.items.map((item, index) => (
+                <ListItem key={index}>
+                  <Bullet>•</Bullet>
+                  {item}
+                </ListItem>
+              ))}
+            </List>
 
-        {/* Tab content based on activeTab */}
-        {(() => {
-          switch (activeTab) {
-            case "schedule":
-              return (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Day {currentDay} Schedule</CardTitle>
-                    <Description>
-                      {currentDay % 7 === 0 ? "REST DAY" : "TRAINING DAY"} Schedule
-                      for Phase {currentPhase}
-                    </Description>
-                  </CardHeader>
-                  {getDailySchedule().map((item, index) => (
-                    <ScheduleItem key={index}>
-                      <Time>{item.time}</Time>
-                      <Activity>{item.activity}</Activity>
-                    </ScheduleItem>
+            <DetailsButton onClick={() => toggleDetails("training")}>
+              {showDetails["training"]
+                ? "Hide Details"
+                : "Show Detailed Instructions"}{" "}
+              {showDetails["training"] ? "▲" : "▼"}
+            </DetailsButton>
+
+            {showDetails["training"] && (
+              <DetailSection>
+                <CategoryTitle>Knee Rehabilitation</CategoryTitle>
+                <List>
+                  {trainingPlan.details.kneeRehab.map((item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ListItem>
                   ))}
-                </Card>
-              );
-            case "training":
-              const trainingPlan = getDailyTrainingPlan();
-              return (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Training Plan</CardTitle>
-                    <Description>{trainingPlan.description}</Description>
-                  </CardHeader>
-                  <SectionTitle>{trainingPlan.title}</SectionTitle>
-                  <List>
-                    {trainingPlan.items.map((item, index) => (
-                      <ListItem key={index}>
-                        <Bullet>•</Bullet>
-                        {item}
-                      </ListItem>
-                    ))}
-                  </List>
+                </List>
 
-                  <DetailsButton onClick={() => toggleDetails("training")}>
-                    {showDetails["training"]
-                      ? "Hide Details"
-                      : "Show Detailed Instructions"}{" "}
-                    {showDetails["training"] ? "▲" : "▼"}
-                  </DetailsButton>
+                <CategoryTitle>Boxing Technique Development</CategoryTitle>
+                <List>
+                  {trainingPlan.details.boxingTechnique.map((item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ListItem>
+                  ))}
+                </List>
 
-                  {showDetails["training"] && (
-                    <DetailSection>
-                      <CategoryTitle>Knee Rehabilitation</CategoryTitle>
-                      <List>
-                        {trainingPlan.details.kneeRehab.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
+                <CategoryTitle>Conditioning Protocol</CategoryTitle>
+                <List>
+                  {trainingPlan.details.conditioning.map((item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ListItem>
+                  ))}
+                </List>
 
-                      <CategoryTitle>Boxing Technique Development</CategoryTitle>
-                      <List>
-                        {trainingPlan.details.boxingTechnique.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
+                <CategoryTitle>Strength Development</CategoryTitle>
+                <List>
+                  {trainingPlan.details.strength.map((item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      {item}
+                    </ListItem>
+                  ))}
+                </List>
 
-                      <CategoryTitle>Conditioning Protocol</CategoryTitle>
-                      <List>
-                        {trainingPlan.details.conditioning.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
+                <CategoryTitle>Weekly Workout Schedule</CategoryTitle>
+                <List>
+                  {trainingPlan.workoutSchedule.map((item, index) => (
+                    <ListItem key={index}>
+                      <Bullet>•</Bullet>
+                      <strong>{item.day}:</strong> {item.focus}
+                    </ListItem>
+                  ))}
+                </List>
+              </DetailSection>
+            )}
+          </Card>
+        );
+      case "nutrition":
+        const nutritionPlan = getDailyNutritionPlan();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Nutrition Protocol</CardTitle>
+              <Description>{nutritionPlan.description}</Description>
+            </CardHeader>
+            <SectionTitle>{nutritionPlan.title}</SectionTitle>
+            <List>
+              {nutritionPlan.items.map((item, index) => (
+                <ListItem key={index}>
+                  <Bullet>•</Bullet>
+                  {item}
+                </ListItem>
+              ))}
+            </List>
 
-                      <CategoryTitle>Strength Development</CategoryTitle>
-                      <List>
-                        {trainingPlan.details.strength.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
+            <DetailsButton onClick={() => toggleDetails("nutrition")}>
+              {showDetails["nutrition"]
+                ? "Hide Details"
+                : "Show Detailed Nutrition Plan"}{" "}
+              {showDetails["nutrition"] ? "▲" : "▼"}
+            </DetailsButton>
 
-                      <CategoryTitle>Weekly Workout Schedule</CategoryTitle>
-                      <List>
-                        {trainingPlan.workoutSchedule.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            <strong>{item.day}:</strong> {item.focus}
-                          </ListItem>
-                        ))}
-                      </List>
-                    </DetailSection>
-                  )}
-                </Card>
-              );
-            case "nutrition":
-              const nutritionPlan = getDailyNutritionPlan();
-              return (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Nutrition Protocol</CardTitle>
-                    <Description>{nutritionPlan.description}</Description>
-                  </CardHeader>
-                  <SectionTitle>{nutritionPlan.title}</SectionTitle>
-                  <List>
-                    {nutritionPlan.items.map((item, index) => (
-                      <ListItem key={index}>
-                        <Bullet>•</Bullet>
-                        {item}
-                      </ListItem>
-                    ))}
-                  </List>
+            {showDetails["nutrition"] && (
+              <DetailSection>
+                {/* Nutrition details */}
+              </DetailSection>
+            )}
+          </Card>
+        );
+      case "mindset":
+        const mindsetPlan = getDailyMindsetPlan();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Mindset Programming</CardTitle>
+              <Description>{mindsetPlan.description}</Description>
+            </CardHeader>
+            <SectionTitle>{mindsetPlan.title}</SectionTitle>
+            <List>
+              {mindsetPlan.items.map((item, index) => (
+                <ListItem key={index}>
+                  <Bullet>•</Bullet>
+                  {item}
+                </ListItem>
+              ))}
+            </List>
 
-                  <DetailsButton onClick={() => toggleDetails("nutrition")}>
-                    {showDetails["nutrition"]
-                      ? "Hide Details"
-                      : "Show Detailed Nutrition Plan"}{" "}
-                    {showDetails["nutrition"] ? "▲" : "▼"}
-                  </DetailsButton>
+            <DetailsButton onClick={() => toggleDetails("mindset")}>
+              {showDetails["mindset"]
+                ? "Hide Details"
+                : "Show Mental Training Details"}{" "}
+              {showDetails["mindset"] ? "▲" : "▼"}
+            </DetailsButton>
 
-                  {showDetails["nutrition"] && (
-                    <DetailSection>
-                      <CategoryTitle>Implementation Details</CategoryTitle>
-                      <List>
-                        {nutritionPlan.details.map((item, index) => (
-                          <ListItem key={index}>
-                            <Bullet>•</Bullet>
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
+            {showDetails["mindset"] && (
+              <DetailSection>
+                {/* Mindset details */}
+              </DetailSection>
+            )}
+          </Card>
+        );
+      case "supplements":
+        const supplementPlan = getDailySupplements();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Supplement Protocol</CardTitle>
+              <Description>
+                Phase {currentPhase} optimized supplementation
+              </Description>
+            </CardHeader>
+            <SectionTitle>{supplementPlan.title}</SectionTitle>
+            <List>
+              {supplementPlan.items.map((item, index) => (
+                <ListItem key={index}>
+                  <Bullet>•</Bullet>
+                  {item}
+                </ListItem>
+              ))}
+            </List>
 
-                      <CategoryTitle>Daily Meal Plan</CategoryTitle>
-                      {typeof nutritionPlan.mealPlan === "string" ? (
-                        <p>{nutritionPlan.mealPlan}</p>
-                      ) : (
-                        <>
-                          {nutritionPlan.mealPlan.refeedDay !== undefined && (
-                            <p>
-                              <strong>
-                                {nutritionPlan.mealPlan.refeedDay
-                                  ? "REFEED DAY"
-                                  : "REGULAR DAY"}
-                              </strong>
-                            </p>
-                          )}
-                          {nutritionPlan.mealPlan.feedingDay !== undefined && (
-                            <p>
-                              <strong>
-                                {nutritionPlan.mealPlan.feedingDay
-                                  ? "FEEDING DAY"
-                                  : "FASTING DAY"}
-                              </strong>
-                            </p>
-                          )}
-                          {nutritionPlan.mealPlan.refeeding !== undefined && (
-                            <p>
-                              <strong>{nutritionPlan.mealPlan.refeeding}</strong> -{" "}
-                              {nutritionPlan.mealPlan.feedingWindow}
-                            </p>
-                          )}
-                          {nutritionPlan.mealPlan.trainingDay !== undefined && (
-                            <p>
-                              <strong>
-                                {nutritionPlan.mealPlan.trainingDay
-                                  ? "TRAINING DAY NUTRITION"
-                                  : "REST DAY NUTRITION"}
-                              </strong>
-                            </p>
-                          )}
-                          {nutritionPlan.mealPlan.meals && (
-                            <List>
-                              {nutritionPlan.mealPlan.meals.map((meal, index) => (
-                                <ListItem key={index}>
-                                  <Bullet>•</Bullet>
-                                  <strong>{meal.time}:</strong> {meal.food}
-                                </ListItem>
-                              ))}
-                            </List>
-                          )}
-                        </>
-                      )}
-                    </DetailSection>
-                  )}
-                </Card>
-              );
-            // Add other cases here as needed...
-            default:
-              return null;
-          }
-        })()}
-      </div>
-    );
+            <DetailsButton onClick={() => toggleDetails("supplements")}>
+              {showDetails["supplements"]
+                ? "Hide Details"
+                : "Show Supplement Details"}{" "}
+              {showDetails["supplements"] ? "▲" : "▼"}
+            </DetailsButton>
+
+            {showDetails["supplements"] && (
+              <DetailSection>
+                {/* Supplement details */}
+              </DetailSection>
+            )}
+          </Card>
+        );
+      case "recovery":
+        const recoveryPlan = getRecoveryProtocols();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Recovery Protocols</CardTitle>
+              <Description>{recoveryPlan.description}</Description>
+            </CardHeader>
+            <SectionTitle>{recoveryPlan.title}</SectionTitle>
+            <List>
+              {recoveryPlan.items.map((item, index) => (
+                <ListItem key={index}>
+                  <Bullet>•</Bullet>
+                  {item}
+                </ListItem>
+              ))}
+            </List>
+
+            <DetailsButton onClick={() => toggleDetails("recovery")}>
+              {showDetails["recovery"]
+                ? "Hide Details"
+                : "Show Recovery Details"}{" "}
+              {showDetails["recovery"] ? "▲" : "▼"}
+            </DetailsButton>
+
+            {showDetails["recovery"] && (
+              <DetailSection>
+                {/* Recovery details */}
+              </DetailSection>
+            )}
+          </Card>
+        );
+      case "shopping":
+        const shoppingList = getWeeklyShoppingList();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Shopping List</CardTitle>
+              <Description>
+                Week {Math.ceil(currentDay / 7)} essentials for Phase{" "}
+                {currentPhase}
+              </Description>
+            </CardHeader>
+            {/* Shopping list content */}
+          </Card>
+        );
+      case "checklist":
+        const checklistItems = getDailyChecklist();
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Day {currentDay} Checklist</CardTitle>
+              <Description>
+                Track your daily completion for maximum results
+              </Description>
+            </CardHeader>
+            {/* Checklist content */}
+          </Card>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -2168,8 +2175,8 @@ function App() {
       <TabsContainer>
         <TabButtons>
           <TabButton
-            active={activeTab === "daily-plan"}
-            onClick={() => setActiveTab("daily-plan")}
+            active={activeTab === "schedule"}
+            onClick={() => setActiveTab("schedule")}
           >
             <TabIcon>📅</TabIcon>
             <TabLabel>Schedule</TabLabel>
