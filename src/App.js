@@ -1577,18 +1577,15 @@ function App() {
   };
 
   const getDailySchedule = () => {
-    // Common schedule items for all days
+    // Determine if today is a fasting day (for example, odd days or specific days per phase)
+    const isFastingDay = currentDay % 4 === 0; // Example: Every 4th day is a fasting day
+    
+    // Common schedule items for all days (fasting and non-fasting)
     const commonItems = [
       { time: "5:30 AM", activity: "Wake up, hydration (16oz water with lemon and Himalayan salt)" },
       { time: "5:45 AM", activity: "Morning supplements: Vitamin D, Fish Oil, Multivitamin (on empty stomach)" },
       { time: "6:00 AM", activity: "Mindset work - visualization, affirmations" },
-      { time: "6:30 AM", activity: "Breakfast: Protein (eggs/protein shake), complex carbs (oatmeal/sweet potato), healthy fats (avocado/nuts)" },
-      { time: "7:00 AM", activity: "Pre-workout supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" },
-      { time: "10:00 AM", activity: "Mid-morning protein shake + Digestive enzymes" },
-      { time: "1:00 PM", activity: "Lunch: Lean protein (chicken/fish), complex carbs (rice/quinoa), vegetables + Zinc supplement (with meal)" },
-      { time: "4:00 PM", activity: "Mid-afternoon snack: Protein bar or Greek yogurt with berries + Magnesium (with food)" },
-      { time: "7:00 PM", activity: "Dinner: Lean protein (beef/salmon), vegetables, healthy fats (olive oil/nuts)" },
-      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
+      { time: "7:00 AM", activity: isFastingDay ? "Pre-workout supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" : "Pre-workout nutrition and supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" },
       { time: "9:30 PM", activity: "Evening recovery protocol" },
       { time: "10:00 PM", activity: "Sleep" },
     ];
@@ -1596,7 +1593,7 @@ function App() {
     // Training day specific schedule
     const trainingDayItems = [
       { time: "7:30 AM", activity: "Training session" },
-      { time: "9:30 AM", activity: "Post-workout supplements: Protein, BCAAs, Electrolytes (immediately after training)" },
+      { time: "9:30 AM", activity: isFastingDay ? "Electrolytes and essential supplements (maintain fast)" : "Post-workout supplements: Protein, BCAAs, Electrolytes (immediately after training)" },
     ];
 
     // Rest day specific schedule
@@ -1605,26 +1602,48 @@ function App() {
       { time: "9:30 AM", activity: "Rehabilitation exercises" },
     ];
 
+    // Non-fasting day meal items
+    const mealItems = isFastingDay ? [] : [
+      { time: "6:30 AM", activity: "Breakfast: Protein (eggs/protein shake), complex carbs (oatmeal/sweet potato), healthy fats (avocado/nuts)" },
+      { time: "10:00 AM", activity: "Mid-morning protein shake + Digestive enzymes" },
+      { time: "1:00 PM", activity: "Lunch: Lean protein (chicken/fish), complex carbs (rice/quinoa), vegetables + Zinc supplement (with meal)" },
+      { time: "4:00 PM", activity: "Mid-afternoon snack: Protein bar or Greek yogurt with berries + Magnesium (with food)" },
+      { time: "7:00 PM", activity: "Dinner: Lean protein (beef/salmon), vegetables, healthy fats (olive oil/nuts)" },
+    ];
+    
+    // Fasting day specific items
+    const fastingDayItems = isFastingDay ? [
+      { time: "9:00 AM", activity: "FASTING WINDOW: Electrolytes + Sparkling water (no calories)" },
+      { time: "12:00 PM", activity: "FASTING WINDOW: Black coffee or green tea + Electrolytes (maintain hydration)" },
+      { time: "3:00 PM", activity: "FASTING WINDOW: Apple cider vinegar water + Minerals (maintain electrolyte balance)" },
+      { time: "6:00 PM", activity: "FASTING WINDOW: Sodium + Potassium in water (maintain electrolyte balance)" },
+      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
+    ] : [
+      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
+    ];
+
     // Phase-specific items
     const phaseItems = [];
     switch (currentPhase) {
       case 1: // Foundation
         phaseItems.push(
           { time: "3:00 PM", activity: "Electrolyte drink + Vitamin C (between meals)" },
+          isFastingDay ? { time: "5:00 PM", activity: "Foundation phase: Extended fasting window (prioritizing autophagy)" } :
           { time: "11:00 AM", activity: "Foundation phase snack: Banana with almond butter (focus on nutrient density)" }
         );
         break;
       case 2: // Intensification
         phaseItems.push(
           { time: "2:30 PM", activity: "Intra-workout nutrition: EAAs, Electrolytes (during intense sessions)" },
-          { time: "5:30 PM", activity: "Pre-dinner supplements: Digestive enzymes (15 min before meal)" },
+          isFastingDay ? { time: "4:00 PM", activity: "Intensification phase: Strategic electrolytes during fasting window" } :
           { time: "11:30 AM", activity: "Intensification phase meal: Higher carb intake to fuel workouts - rice, potatoes, or pasta" }
         );
         break;
       case 3: // Peak/Maintenance
         phaseItems.push(
-          { time: "11:30 AM", activity: "Pre-lunch supplements: Digestive enzymes (15 min before meal)" },
+          { time: "11:30 AM", activity: isFastingDay ? "Pre-lunch: Extended fasting window for metabolic flexibility" : "Pre-lunch supplements: Digestive enzymes (15 min before meal)" },
           { time: "3:00 PM", activity: "Performance supplements: Beta-Alanine, Citrulline (1 hr before evening session)" },
+          isFastingDay ? { time: "5:00 PM", activity: "Peak phase: Strategic electrolytes during extended fasting" } :
           { time: "8:30 AM", activity: "Peak phase nutrition: Protein-focused meal with strategic carb timing before/after workouts" }
         );
         break;
@@ -1636,6 +1655,8 @@ function App() {
     return [
       ...commonItems,
       ...(isTrainingDay ? trainingDayItems : restDayItems),
+      ...mealItems,
+      ...fastingDayItems,
       ...phaseItems,
     ].sort((a, b) => {
       const timeA = new Date(`1970/01/01 ${a.time}`);
