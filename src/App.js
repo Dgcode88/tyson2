@@ -15,44 +15,71 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+  align-items: center;
+  margin-bottom: 40px;
+  width: 100%;
+  text-align: center;
 `;
 
-const Title = styled.div``;
-
 const MainTitle = styled.h1`
-  font-size: 24px;
+  font-size: 48px;
   font-weight: bold;
-  margin: 0;
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #ecc94b;
+  width: 100%;
 `;
 
 const SubTitle = styled.h2`
-  font-size: 18px;
+  font-size: 24px;
   color: #ecc94b;
   margin: 5px 0;
+  text-align: center;
 `;
 
 const Description = styled.p`
   color: #a0aec0;
-  font-size: 14px;
-  margin: 0;
+  font-size: 16px;
+  margin: 10px 0 0 0;
+  text-align: center;
 `;
 
 const DaySelector = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 15px;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 30px 0;
+  width: 100%;
+`;
 
-  @media (min-width: 768px) {
-    margin-top: 0;
-  }
+const DayControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const DayDisplay = styled.div`
+  background-color: #2d3748;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DayText = styled.span`
+  font-weight: bold;
+  font-size: 18px;
+  color: ${props => props.dim ? '#a0aec0' : 'white'};
+`;
+
+const DayNumber = styled.span`
+  color: #ecc94b;
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 1;
+  margin: 0 5px;
 `;
 
 const Button = styled.button`
@@ -73,38 +100,6 @@ const Button = styled.button`
   &:hover:not(:disabled) {
     background-color: #2d3748;
   }
-`;
-
-const DayDisplay = styled.div`
-  background-color: #2d3748;
-  padding: 8px 16px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-`;
-
-const DayText = styled.span`
-  font-weight: bold;
-`;
-
-const DayNumber = styled.span`
-  color: #ecc94b;
-  font-size: 28px; /* Increased size */
-  font-weight: bold;
-  margin: 0 5px;
-`;
-
-const DayInput = styled.input`
-  background-color: #1a202c;
-  border: 1px solid #4a5568;
-  border-radius: 4px;
-  color: #ecc94b;
-  width: 40px;
-  padding: 4px;
-  margin: 0 5px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
 `;
 
 const GoButton = styled.button`
@@ -394,6 +389,19 @@ const VisualizationScript = styled.div`
   margin-top: 12px;
   border-left: 3px solid #805ad5;
   font-style: italic;
+`;
+
+const DayInput = styled.input`
+  background-color: #1a202c;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  color: #ecc94b;
+  width: 50px;
+  padding: 8px;
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 function App() {
@@ -2131,56 +2139,42 @@ function App() {
   return (
     <Container>
       <Header>
-        <Title>
-          <MainTitle>90-DAY TYSON TRANSFORMATION</MainTitle>
-          <SubTitle>
-            PHASE {currentPhase}: {phaseInfo[currentPhase].name}
-          </SubTitle>
-          <Description>{phaseInfo[currentPhase].description}</Description>
-        </Title>
-        <DaySelector>
-          <DayCompletionCheckbox
-            onClick={() => toggleDayCompletion(currentDay)}
+        <MainTitle>90-DAY TYSON TRANSFORMATION</MainTitle>
+        <SubTitle>{phaseInfo[currentPhase].name}</SubTitle>
+        <Description>{phaseInfo[currentPhase].description}</Description>
+      </Header>
+
+      <DaySelector>
+        <DayControls>
+          <Button
+            onClick={() => handleDayChange(currentDay - 1)}
+            disabled={currentDay === 1}
           >
+            ←
+          </Button>
+          <DayDisplay>
+            <DayText>DAY</DayText>
+            <DayNumber>{currentDay}</DayNumber>
+            <DayText dim>/</DayText>
+            <DayText dim>90</DayText>
+          </DayDisplay>
+          <Button
+            onClick={() => handleDayChange(currentDay + 1)}
+            disabled={currentDay === 90}
+          >
+            →
+          </Button>
+        </DayControls>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <DayCompletionCheckbox onClick={() => toggleDayCompletion(currentDay)}>
             <Checkbox checked={completedDays[currentDay]}>
               {completedDays[currentDay] && "✓"}
             </Checkbox>
             <span>Mark Day Complete</span>
           </DayCompletionCheckbox>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: "10px",
-            }}
-          >
-            <Button
-              onClick={() => handleDayChange(currentDay - 1)}
-              disabled={currentDay === 1}
-            >
-              ←
-            </Button>
-            <DayDisplay>
-              <DayText>DAY</DayText>
-              <DayNumber>{currentDay}</DayNumber>
-              <DayText style={{ color: "#a0aec0" }}>/ 90</DayText>
-            </DayDisplay>
-            <Button
-              onClick={() => handleDayChange(currentDay + 1)}
-              disabled={currentDay === 90}
-            >
-              →
-            </Button>
-          </div>
-
-          <div
-            style={{
-              marginLeft: "15px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <DayText>JUMP TO:</DayText>
             <DayInput
               type="number"
@@ -2192,8 +2186,8 @@ function App() {
             />
             <GoButton onClick={jumpToDay}>GO</GoButton>
           </div>
-        </DaySelector>
-      </Header>
+        </div>
+      </DaySelector>
 
       <ProgressSection>
         <Card>
