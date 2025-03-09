@@ -304,48 +304,53 @@ const TabsContainer = styled.div`
 `;
 
 const TabButtons = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   background-color: #2d3748;
   border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 10px;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(8, 1fr);
+  padding: 8px;
+  margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+    gap: 8px;
   }
 `;
 
 const TabButton = styled.button`
-  background-color: ${(props) => (props.active ? "#4a5568" : "#2d3748")};
-  color: ${(props) => (props.active ? "#ecc94b" : "white")};
+  background-color: ${(props) => (props.active ? "#4a5568" : "transparent")};
   border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
+  color: white;
+  font-size: 14px;
+  padding: 12px 8px;
   cursor: pointer;
-  font-weight: ${(props) => (props.active ? "bold" : "normal")};
-  margin-right: 8px;
-  margin-bottom: 8px;
-  box-shadow: ${(props) => (props.active ? "0 2px 4px rgba(0, 0, 0, 0.2)" : "0 1px 2px rgba(0, 0, 0, 0.1)")};
-  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex: 1;
+  min-width: 90px;
+  border-radius: 4px;
   
   &:hover {
-    background-color: ${(props) => (props.active ? "#4a5568" : "#3a4556")};
-    transform: translateY(-1px);
+    background-color: #4a5568;
   }
   
-  &:active {
-    transform: translateY(0);
+  @media (max-width: 768px) {
+    min-width: 80px;
+    flex: 0 0 auto;
   }
 `;
 
-const TabIcon = styled.span`
-  margin-bottom: 4px;
-  font-size: 18px;
+const TabIcon = styled.div`
+  font-size: 24px;
+  margin-bottom: 6px;
 `;
 
-const TabLabel = styled.span`
-  font-size: 11px;
+const TabLabel = styled.div`
+  font-size: 13px;
+  white-space: nowrap;
 `;
 
 const TabContent = styled.div`
@@ -354,23 +359,36 @@ const TabContent = styled.div`
 
 const ScheduleItem = styled.div`
   display: flex;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid #4a5568;
-  &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: ${props => props.isSupplementItem ? 'rgba(56, 178, 172, 0.15)' : 'transparent'};
+  border-left: ${props => props.isSupplementItem ? '3px solid #38b2ac' : 'none'};
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: ${props => props.isSupplementItem ? 'rgba(56, 178, 172, 0.25)' : 'rgba(74, 85, 104, 0.2)'};
   }
 `;
 
 const Time = styled.div`
-  width: 80px;
   font-weight: bold;
+  min-width: 100px;
   color: #ecc94b;
+  
+  @media (max-width: 480px) {
+    min-width: 80px;
+    font-size: 14px;
+  }
 `;
 
 const Activity = styled.div`
-  flex-grow: 1;
+  flex: 1;
+  
+  strong {
+    color: #38b2ac;
+    font-weight: bold;
+  }
 `;
 
 const SectionTitle = styled.h3`
@@ -1553,80 +1571,68 @@ function App() {
   };
 
   const getDailySchedule = () => {
-    const isTrainingDay = currentDay % 7 !== 0; // Assuming Sunday is rest day
+    // Common schedule items for all days
+    const commonItems = [
+      { time: "5:30 AM", activity: "Wake up, hydration (16oz water with lemon and Himalayan salt)" },
+      { time: "5:45 AM", activity: "Morning supplements: Vitamin D, Fish Oil, Multivitamin (on empty stomach)" },
+      { time: "6:00 AM", activity: "Mindset work - visualization, affirmations" },
+      { time: "6:30 AM", activity: "Breakfast" },
+      { time: "7:00 AM", activity: "Pre-workout supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" },
+      { time: "10:00 AM", activity: "Mid-morning protein shake + Digestive enzymes" },
+      { time: "1:00 PM", activity: "Lunch + Zinc supplement (with meal)" },
+      { time: "4:00 PM", activity: "Mid-afternoon snack + Magnesium (with food)" },
+      { time: "7:00 PM", activity: "Dinner" },
+      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
+      { time: "9:30 PM", activity: "Evening recovery protocol" },
+      { time: "10:00 PM", activity: "Sleep" },
+    ];
 
-    if (isTrainingDay) {
-      return [
-        { time: "7:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
-        {
-          time: "8:30 AM",
-          activity: "Mobility routine & Knee rehabilitation protocol",
-        },
-        {
-          time: "9:00 AM",
-          activity: "Conditioning workout followed by ice bath",
-        },
-        {
-          time: "10:00 AM",
-          activity:
-            currentDay > 10
-              ? "First meal (if feeding window)"
-              : "Electrolytes + supplements",
-        },
-        { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
-        { time: "2:00 PM", activity: "Recovery protocols & Meditation" },
-        {
-          time: "4:00 PM",
-          activity: "Main strength session & Power development",
-        },
-        {
-          time: "6:00 PM",
-          activity: "Final boxing session & Mental warfare training",
-        },
-        {
-          time: "8:00 PM",
-          activity:
-            currentDay > 10
-              ? "Strategic nutrition (if feeding window)"
-              : "Recovery supplementation",
-        },
-        { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
-        {
-          time: "10:00 PM",
-          activity: "Sleep preparation & Final mindset programming",
-        },
-        { time: "11:00 PM", activity: "Sleep" },
-      ];
-    } else {
-      return [
-        {
-          time: "8:00 AM",
-          activity: "Wake-up, Cold exposure, Extended mindset work",
-        },
-        {
-          time: "9:00 AM",
-          activity: "Extended mobility session & Injury prevention",
-        },
-        {
-          time: "10:00 AM",
-          activity: "Light active recovery & Technique study",
-        },
-        { time: "12:00 PM", activity: "Mental training & Visualization" },
-        { time: "2:00 PM", activity: "Recovery modalities & Contrast therapy" },
-        {
-          time: "4:00 PM",
-          activity: "Study fighting footage & Strategy development",
-        },
-        { time: "6:00 PM", activity: "Light skill practice & Balance work" },
-        { time: "8:00 PM", activity: "Strategic nutrition & Supplementation" },
-        { time: "9:00 PM", activity: "Final recovery protocols" },
-        {
-          time: "10:00 PM",
-          activity: "Sleep preparation & Relaxation techniques",
-        },
-        { time: "11:00 PM", activity: "Sleep" },
-      ];
+    // Training day specific schedule
+    const trainingDayItems = [
+      { time: "7:30 AM", activity: "Training session" },
+      { time: "9:30 AM", activity: "Post-workout supplements: Protein, BCAAs, Electrolytes (immediately after training)" },
+    ];
+
+    // Rest day specific schedule
+    const restDayItems = [
+      { time: "7:30 AM", activity: "Active recovery: Mobility work or light cardio" },
+      { time: "9:30 AM", activity: "Rehabilitation exercises" },
+    ];
+
+    // Nutrition specific items based on phase
+    const nutritionItems = [];
+    switch (currentPhase) {
+      case 1: // Foundation
+        nutritionItems.push(
+          { time: "3:00 PM", activity: "Electrolyte drink + Vitamin C (between meals)" }
+        );
+        break;
+      case 2: // Intensification
+        nutritionItems.push(
+          { time: "2:30 PM", activity: "Intra-workout nutrition: EAAs, Electrolytes (during intense sessions)" },
+          { time: "5:30 PM", activity: "Pre-dinner supplements: Digestive enzymes (15 min before meal)" }
+        );
+        break;
+      case 3: // Peak/Maintenance
+        nutritionItems.push(
+          { time: "11:30 AM", activity: "Pre-lunch supplements: Digestive enzymes (15 min before meal)" },
+          { time: "3:00 PM", activity: "Performance supplements: Beta-Alanine, Citrulline (1 hr before evening session)" }
+        );
+        break;
     }
+
+    const isTrainingDay = currentDay % 7 !== 0; // Rest on every 7th day
+
+    // Sort by time and return combined schedule
+    return [
+      ...commonItems,
+      ...(isTrainingDay ? trainingDayItems : restDayItems),
+      ...nutritionItems,
+    ].sort((a, b) => {
+      const timeA = new Date(`1970/01/01 ${a.time}`);
+      const timeB = new Date(`1970/01/01 ${b.time}`);
+      return timeA - timeB;
+    });
   };
 
   const getDailyChecklist = () => {
@@ -1820,9 +1826,18 @@ function App() {
               </Description>
             </CardHeader>
             {getDailySchedule().map((item, index) => (
-              <ScheduleItem key={index}>
+              <ScheduleItem 
+                key={index} 
+                isSupplementItem={item.activity.toLowerCase().includes('supplement') || 
+                                 item.activity.toLowerCase().includes('vitamin') ||
+                                 item.activity.toLowerCase().includes('protein') ||
+                                 item.activity.toLowerCase().includes('creatine')}
+              >
                 <Time>{item.time}</Time>
-                <Activity>{item.activity}</Activity>
+                <Activity dangerouslySetInnerHTML={{ 
+                  __html: item.activity.replace(/(supplement|vitamin|protein|creatine|bcaa|enzyme|electrolyte|magnesium|zinc|ashwagandha|zma|beta-alanine|caffeine|fish oil|multivitamin|citrulline)/gi, 
+                  match => `<strong>${match}</strong>`) 
+                }} />
               </ScheduleItem>
             ))}
           </Card>
