@@ -7,9 +7,11 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 20px;
   background-color: #1a202c;
+  background-image: linear-gradient(to bottom, #1a202c, #2d3748);
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 `;
 
 const Header = styled.div`
@@ -28,13 +30,22 @@ const MainTitle = styled.h1`
   text-align: center;
   color: #ecc94b;
   width: 100%;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 `;
 
 const SubTitle = styled.h2`
   font-size: 24px;
-  color: #ecc94b;
+  color: #38b2ac; /* Teal color to differentiate from the gold title */
   margin: 5px 0;
   text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: inline-block;
+`;
+
+const PhaseText = styled.span`
+  font-weight: 600;
 `;
 
 const Description = styled.p`
@@ -42,6 +53,7 @@ const Description = styled.p`
   font-size: 16px;
   margin: 10px 0 0 0;
   text-align: center;
+  max-width: 700px;
 `;
 
 const DaySelector = styled.div`
@@ -66,6 +78,13 @@ const DayDisplay = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  }
 `;
 
 const DayText = styled.span`
@@ -80,6 +99,7 @@ const DayNumber = styled.span`
   font-weight: bold;
   line-height: 1;
   margin: 0 5px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 `;
 
 const Button = styled.button`
@@ -93,26 +113,35 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
   &:hover:not(:disabled) {
     background-color: #2d3748;
+    transform: translateY(-1px);
   }
+  transition: all 0.2s ease;
 `;
 
 const GoButton = styled.button`
-  background-color: #ecc94b;
-  color: #1a202c;
+  background-color: #38b2ac;
   border: none;
+  color: white;
+  font-weight: bold;
   border-radius: 4px;
   padding: 4px 8px;
-  font-weight: bold;
   cursor: pointer;
-  margin-left: 5px;
+  transition: all 0.2s ease;
+  
   &:hover {
-    background-color: #d6b636;
+    background-color: #319795;
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -126,14 +155,22 @@ const DayCompletionCheckbox = styled.div`
 const Checkbox = styled.div`
   width: 20px;
   height: 20px;
-  border: 2px solid ${(props) => (props.checked ? "#10B981" : "#6B7280")};
+  background-color: ${(props) => (props.checked ? "#38b2ac" : "#2d3748")};
+  border: 2px solid ${(props) => (props.checked ? "#38b2ac" : "#4a5568")};
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 6px;
-  background-color: ${(props) => (props.checked ? "#10B981" : "transparent")};
   color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: #38b2ac;
+    transform: scale(1.1);
+  }
 `;
 
 const ProgressSection = styled.div`
@@ -151,7 +188,13 @@ const Card = styled.div`
   background-color: #2d3748;
   border-radius: 8px;
   padding: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.12);
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -198,16 +241,19 @@ const NextPhaseButton = styled.button`
 
 const ProgressBar = styled.div`
   height: 8px;
-  background-color: #4a5568;
+  background-color: #2d3748;
   border-radius: 4px;
-  margin-bottom: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 `;
 
 const Progress = styled.div`
   height: 100%;
+  background-color: #48bb78;
+  width: ${(props) => props.percentage}%;
   border-radius: 4px;
-  background-color: ${(props) => props.color || "#ecc94b"};
-  width: ${(props) => props.value}%;
+  transition: width 0.5s ease-in-out;
 `;
 
 const ProgressText = styled.div`
@@ -234,18 +280,25 @@ const TabButtons = styled.div`
 `;
 
 const TabButton = styled.button`
-  padding: 12px 8px;
-  background-color: ${(props) => (props.active ? "#4a5568" : "transparent")};
+  background-color: ${(props) => (props.active ? "#4a5568" : "#2d3748")};
+  color: ${(props) => (props.active ? "#ecc94b" : "white")};
   border: none;
-  color: white;
-  font-size: 14px;
+  border-radius: 8px;
+  padding: 10px 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  font-weight: ${(props) => (props.active ? "bold" : "normal")};
+  margin-right: 8px;
+  margin-bottom: 8px;
+  box-shadow: ${(props) => (props.active ? "0 2px 4px rgba(0, 0, 0, 0.2)" : "0 1px 2px rgba(0, 0, 0, 0.1)")};
+  transition: all 0.2s ease;
+  
   &:hover {
-    background-color: #4a5568;
+    background-color: ${(props) => (props.active ? "#4a5568" : "#3a4556")};
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -284,9 +337,14 @@ const Activity = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  font-size: 20px;
+  font-size: 22px;
   color: #ecc94b;
-  margin: 0 0 16px 0;
+  margin-top: 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 `;
 
 const List = styled.ul`
@@ -2140,7 +2198,10 @@ function App() {
     <Container>
       <Header>
         <MainTitle>90-DAY TYSON TRANSFORMATION</MainTitle>
-        <SubTitle>{phaseInfo[currentPhase].name}</SubTitle>
+        <SubTitle>
+          <PhaseText>Phase: </PhaseText>
+          {phaseInfo[currentPhase].name}
+        </SubTitle>
         <Description>{phaseInfo[currentPhase].description}</Description>
       </Header>
 
@@ -2193,7 +2254,7 @@ function App() {
         <Card>
           <CardTitle>Overall Program Progress</CardTitle>
           <ProgressBar>
-            <Progress value={(currentDay / totalDays) * 100} />
+            <Progress percentage={(currentDay / totalDays) * 100} />
           </ProgressBar>
           <ProgressText>{currentDay} days completed</ProgressText>
         </Card>
@@ -2208,7 +2269,7 @@ function App() {
           </PhaseProgressHeader>
           <ProgressBar>
             <Progress
-              value={getCurrentPhaseProgress()}
+              percentage={getCurrentPhaseProgress()}
               color={phaseInfo[currentPhase].color}
             />
           </ProgressBar>
