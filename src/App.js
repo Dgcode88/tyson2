@@ -705,21 +705,20 @@ function App() {
       if (currentDay <= 5) {
         return {
           title: "Water Fast",
-          description:
-            "Strict water fast with electrolytes and specific supplements only",
+          description: "Strict water fast with electrolytes and specific supplements only",
           items: [
             "Morning: 1 tbsp apple cider vinegar + 1/4 tsp salt in 16oz water",
             "Throughout day: 3-4 liters water with electrolytes",
-            "Evening: 1 tbsp MCT oil to maintain ketone production",
+            "Evening: 1 tbsp MCT oil to maintain ketone production"
           ],
           details: [
             "Prepare 2 gallons of water each morning with electrolyte mix (1000mg sodium, 300mg potassium, 300mg magnesium per gallon)",
             "When hunger strikes: 1 cup warm water with 1/2 tsp Himalayan salt",
             "For energy crashes: Take 5 deep breaths, 10 pushups, then 1/2 tbsp MCT oil",
             "Brush teeth at noon and 8pm to reduce hunger signals",
-            "If extreme fatigue: 1/4 tsp sea salt under tongue, wait 60 seconds before swallowing",
+            "If extreme fatigue: 1/4 tsp sea salt under tongue, wait 60 seconds before swallowing"
           ],
-          mealPlan: "Complete fast - no solid foods for entire 5 days",
+          mealPlan: "Complete fast - no solid foods for entire 5 days"
         };
       } else if (currentDay <= 10) {
         return {
@@ -728,103 +727,92 @@ function App() {
           items: [
             "Eating window: High protein (1.5g/lb lean mass)",
             "Moderate fat, near-zero carb",
-            "Supplements during eating window only",
+            "Supplements during eating window only"
           ],
           details: [
             "Fasting fluid mix: 2L water with 1 tsp sea salt, 1/2 tsp potassium chloride (Nu-Salt), 1/2 tsp food-grade magnesium sulfate",
             "Breaking fast properly: Start with bone broth 10 min before first solid food",
             "First solid meal: 6oz protein (salmon, beef, eggs) with 1 tbsp fat (olive oil, butter)",
             "Second meal (60 min later): 8oz protein, 2 cups non-starchy vegetables, 1-2 tbsp fat",
-            "Supplement timing: All daily supplements taken with second meal",
+            "Supplement timing: All daily supplements taken with second meal"
           ],
           mealPlan: {
-            refeeding:
-              "Day " +
-              currentDay +
-              " is a " +
-              (currentDay % 2 === 0 ? "FEEDING" : "FASTING") +
-              " day",
+            refeeding: "Day " + currentDay + " is a " + (currentDay % 2 === 0 ? "FEEDING" : "FASTING") + " day",
             feedingWindow: "5:00 PM - 9:00 PM only",
             meals: [
               {
                 time: "5:00 PM",
-                food: "8oz bone broth with 1 tbsp grass-fed butter",
+                food: "8oz bone broth with 1 tbsp grass-fed butter"
               },
               {
                 time: "5:30 PM",
-                food: "6-8oz grass-fed ribeye steak with pink salt and apple cider vinegar",
+                food: "6-8oz grass-fed ribeye steak with pink salt and apple cider vinegar"
               },
               {
                 time: "7:00 PM",
-                food: "4 whole pasture-raised eggs with 2 cups sautéed spinach in coconut oil",
+                food: "4 whole pasture-raised eggs with 2 cups sautéed spinach in coconut oil"
               },
               {
                 time: "8:30 PM",
-                food: "5oz wild salmon with 1 cup broccoli in grass-fed butter",
-              },
-            ],
-          },
+                food: "5oz wild salmon with 1 cup broccoli in grass-fed butter"
+              }
+            ]
+          }
         };
       } else {
         return {
           title: "Warrior Diet + Strategic Refeed",
-          description:
-            "20:4 fasting protocol (20 hours fasting, 4-hour evening window)",
+          description: "20:4 fasting protocol (20 hours fasting, 4-hour evening window)",
           items: [
             "One weekly high-carb refeed day (300g complex carbs)",
             "Other days: High protein, moderate fat, low carb",
-            "Focus on grass-fed beef, wild fish, organ meats",
+            "Focus on grass-fed beef, wild fish, organ meats"
           ],
           details: [
             "During 20-hour fasting window: Water, black coffee, green tea only",
             "Pre-workout (fasted state): 1 tbsp MCT oil + 5g essential amino acids",
             "Breaking fast (post workout): 40g whey protein isolate, 10g glutamine",
             "Eating window strategy: Start with protein/fat, end with any carbs",
-            "Refeed day strategy (Day " +
-              (currentDay - (currentDay % 7) + 6) +
-              "): Front-load carbs in morning, taper through day",
+            "Refeed day strategy (Day " + (currentDay - currentDay % 7 + 6) + "): Front-load carbs in morning, taper through day"
           ],
           mealPlan: {
             refeedDay: currentDay % 7 === 6,
-            meals:
-              currentDay % 7 === 6
-                ? [
-                    {
-                      time: "6:00 AM",
-                      food: "2 cups white rice with cinnamon and 2 tbsp honey + 4 whole eggs",
-                    },
-                    {
-                      time: "9:00 AM",
-                      food: "1 large sweet potato, 6oz chicken breast, 1 tbsp olive oil",
-                    },
-                    {
-                      time: "12:00 PM",
-                      food: "8oz grass-fed beef, 1 cup white rice, 1 cup vegetables",
-                    },
-                    {
-                      time: "3:00 PM",
-                      food: "2 bananas, 40g whey protein, 1 tbsp almond butter",
-                    },
-                    {
-                      time: "6:00 PM",
-                      food: "8oz wild salmon, 1 cup quinoa, 2 cups mixed vegetables",
-                    },
-                  ]
-                : [
-                    {
-                      time: "5:00 PM",
-                      food: "10oz grass-fed beef/wild-caught salmon/free-range chicken with 2 cups vegetables cooked in 2 tbsp fat (butter/tallow/coconut oil)",
-                    },
-                    {
-                      time: "7:00 PM",
-                      food: "3-5 whole eggs with 1/4 avocado and 2 cups leafy greens",
-                    },
-                    {
-                      time: "8:30 PM",
-                      food: "Protein shake: 40g protein with 1 tbsp MCT oil and 1 tbsp nut butter",
-                    },
-                  ],
-          },
+            meals: currentDay % 7 === 6 ? [
+              {
+                time: "6:00 AM",
+                food: "2 cups white rice with cinnamon and 2 tbsp honey + 4 whole eggs"
+              },
+              {
+                time: "9:00 AM",
+                food: "1 large sweet potato, 6oz chicken breast, 1 tbsp olive oil"
+              },
+              {
+                time: "12:00 PM",
+                food: "8oz grass-fed beef, 1 cup white rice, 1 cup vegetables"
+              },
+              {
+                time: "3:00 PM",
+                food: "2 bananas, 40g whey protein, 1 tbsp almond butter"
+              },
+              {
+                time: "6:00 PM",
+                food: "8oz wild salmon, 1 cup quinoa, 2 cups mixed vegetables"
+              }
+            ] : [
+              {
+                time: "5:00 PM",
+                food: "10oz grass-fed beef/wild-caught salmon/free-range chicken with 2 cups vegetables cooked in 2 tbsp fat (butter/tallow/coconut oil)"
+              },
+              {
+                time: "7:00 PM",
+                food: "3-5 whole eggs with 1/4 avocado and 2 cups leafy greens"
+              },
+              {
+                time: "8:30 PM",
+                food: "Protein shake: 40g protein with 1 tbsp MCT oil and 1 tbsp nut butter"
+              }
+            ]
+          }
         };
       }
     } else if (currentPhase === 2) {
@@ -834,56 +822,53 @@ function App() {
         items: [
           "36-hour fasts followed by 12-hour feeding windows",
           "Feeding days: 3000-3500 calories, high protein",
-          "Strategic pre/post workout nutrition timing",
+          "Strategic pre/post workout nutrition timing"
         ],
         details: [
           "Fasting days: Structured electrolyte supplementation every 4 hours",
           "Pre-training (fasting day): 10g essential amino acids, 6g l-citrulline, 200mg caffeine",
           "Post-training (fasting day): 30g protein isolate, no carbs, 5g BCAA",
           "Feeding day strategy: 4 meals, highest carbs post-workout, protein at every meal",
-          "Nighttime recovery blend: 30g casein protein, 5g glycine, 3g magnesium threonate",
+          "Nighttime recovery blend: 30g casein protein, 5g glycine, 3g magnesium threonate"
         ],
         mealPlan: {
           feedingDay: currentDay % 2 === 0,
-          meals:
-            currentDay % 2 === 0
-              ? [
-                  {
-                    time: "6:00 AM",
-                    food: "6 whole eggs, 1 cup vegetables, 1 tbsp olive oil, 1/4 avocado",
-                  },
-                  {
-                    time: "Post-workout",
-                    food: "60g whey protein, 70g fast-digesting carbs (rice/potatoes), 5g creatine",
-                  },
-                  {
-                    time: "1:00 PM",
-                    food: "10oz lean protein (chicken/turkey/white fish), 1 cup rice, 2 cups vegetables",
-                  },
-                  {
-                    time: "6:00 PM",
-                    food: "10oz fatty protein (ribeye/salmon), 2 cups vegetables, 2 tbsp fat source",
-                  },
-                  {
-                    time: "Before bed",
-                    food: "30g casein protein, 1 tbsp almond butter, 5g glycine",
-                  },
-                ]
-              : [
-                  {
-                    time: "All day",
-                    food: "Water fast with scheduled electrolytes - Complete fasting protocol",
-                  },
-                  {
-                    time: "Pre-workout",
-                    food: "10g essential amino acids, 6g citrulline malate, 200mg caffeine",
-                  },
-                  {
-                    time: "Post-workout",
-                    food: "30g protein isolate, 5g BCAA, 0g carbs",
-                  },
-                ],
-        },
+          meals: currentDay % 2 === 0 ? [
+            {
+              time: "6:00 AM",
+              food: "6 whole eggs, 1 cup vegetables, 1 tbsp olive oil, 1/4 avocado"
+            },
+            {
+              time: "Post-workout",
+              food: "60g whey protein, 70g fast-digesting carbs (rice/potatoes), 5g creatine"
+            },
+            {
+              time: "1:00 PM",
+              food: "10oz lean protein (chicken/turkey/white fish), 1 cup rice, 2 cups vegetables"
+            },
+            {
+              time: "6:00 PM",
+              food: "10oz fatty protein (ribeye/salmon), 2 cups vegetables, 2 tbsp fat source"
+            },
+            {
+              time: "Before bed",
+              food: "30g casein protein, 1 tbsp almond butter, 5g glycine"
+            }
+          ] : [
+            {
+              time: "All day",
+              food: "Water fast with scheduled electrolytes - Complete fasting protocol"
+            },
+            {
+              time: "Pre-workout",
+              food: "10g essential amino acids, 6g citrulline malate, 200mg caffeine"
+            },
+            {
+              time: "Post-workout",
+              food: "30g protein isolate, 5g BCAA, 0g carbs"
+            }
+          ]
+        }
       };
     } else {
       return {
@@ -892,86 +877,79 @@ function App() {
         items: [
           "Training days: 100-150g carbs post-workout only",
           "Non-training days: Under 30g carbs, high protein, high fat",
-          "Weekly carb-loading day (400-500g)",
+          "Weekly carb-loading day (400-500g)"
         ],
         details: [
           "Daily intermittent fasting: 16/8 protocol (first meal at noon)",
           "Pre-training nutrition: 1 tbsp MCT oil, 10g EAAs, 5g creatine, 300mg caffeine",
           "Post-training window: 50g whey isolate + 50-60g dextrose + 5g creatine (training days only)",
           "Post-workout meal (within 90 minutes): 8oz protein, 100g carbs from white rice/potato",
-          "Strategic carb loading: Day " +
-            (currentDay - (currentDay % 7) + 6) +
-            " is high-carb (gradual increase throughout day)",
+          "Strategic carb loading: Day " + (currentDay - currentDay % 7 + 6) + " is high-carb (gradual increase throughout day)"
         ],
         mealPlan: {
           trainingDay: currentDay % 7 !== 0,
           carb_loadDay: currentDay % 7 === 6,
-          meals:
-            currentDay % 7 === 6
-              ? [
-                  {
-                    time: "6:00 AM",
-                    food: "2 cups oatmeal, 2 bananas, 2 tbsp honey, 40g whey protein",
-                  },
-                  {
-                    time: "9:00 AM",
-                    food: "2 cups white rice, 8oz chicken breast, 1 cup vegetables",
-                  },
-                  {
-                    time: "12:00 PM",
-                    food: "2 large sweet potatoes, 8oz lean beef, 2 cups vegetables",
-                  },
-                  {
-                    time: "3:00 PM",
-                    food: "2 cups rice, 2 bananas, 40g whey protein",
-                  },
-                  {
-                    time: "6:00 PM",
-                    food: "12oz lean protein, 2 cups potatoes, 2 cups vegetables",
-                  },
-                  {
-                    time: "9:00 PM",
-                    food: "1 cup rice, 30g casein protein, 1 tbsp honey",
-                  },
-                ]
-              : currentDay % 7 !== 0
-              ? [
-                  {
-                    time: "12:00 PM",
-                    food: "6oz protein (eggs/salmon), 1/2 avocado, 2 cups vegetables",
-                  },
-                  {
-                    time: "Pre-workout",
-                    food: "10g EAAs, 5g creatine, 300mg caffeine, 1 tbsp MCT oil",
-                  },
-                  {
-                    time: "Post-workout",
-                    food: "50g whey isolate + 50g dextrose + 5g creatine",
-                  },
-                  {
-                    time: "Post-workout meal",
-                    food: "10oz lean protein, 100g carbs from white rice/potato, 2 cups vegetables",
-                  },
-                  {
-                    time: "Final meal",
-                    food: "8oz fatty protein, 2 cups green vegetables, 2 tbsp healthy fat",
-                  },
-                ]
-              : [
-                  {
-                    time: "12:00 PM",
-                    food: "6 whole eggs, 1/2 avocado, 2 cups spinach, 2 tbsp olive oil",
-                  },
-                  {
-                    time: "4:00 PM",
-                    food: "10oz fatty fish, 2 cups broccoli, 2 tbsp butter",
-                  },
-                  {
-                    time: "8:00 PM",
-                    food: "10oz ribeye steak, 2 cups asparagus, 1 tbsp butter, 1/2 avocado",
-                  },
-                ],
-        },
+          meals: currentDay % 7 === 6 ? [
+            { 
+              time: "6:00 AM",
+              food: "2 cups oatmeal, 2 bananas, 2 tbsp honey, 40g whey protein"
+            },
+            {
+              time: "9:00 AM",
+              food: "2 cups white rice, 8oz chicken breast, 1 cup vegetables"
+            },
+            {
+              time: "12:00 PM",
+              food: "2 large sweet potatoes, 8oz lean beef, 2 cups vegetables"
+            },
+            {
+              time: "3:00 PM",
+              food: "2 cups rice, 2 bananas, 40g whey protein"
+            },
+            {
+              time: "6:00 PM",
+              food: "12oz lean protein, 2 cups potatoes, 2 cups vegetables"
+            },
+            {
+              time: "9:00 PM",
+              food: "1 cup rice, 30g casein protein, 1 tbsp honey"
+            }
+          ] : currentDay % 7 !== 0 ? [
+            {
+              time: "12:00 PM",
+              food: "6oz protein (eggs/salmon), 1/2 avocado, 2 cups vegetables"
+            },
+            {
+              time: "Pre-workout",
+              food: "10g EAAs, 5g creatine, 300mg caffeine, 1 tbsp MCT oil"
+            },
+            {
+              time: "Post-workout",
+              food: "50g whey isolate + 50g dextrose + 5g creatine"
+            },
+            {
+              time: "Post-workout meal",
+              food: "10oz lean protein, 100g carbs from white rice/potato, 2 cups vegetables"
+            },
+            {
+              time: "Final meal",
+              food: "8oz fatty protein, 2 cups green vegetables, 2 tbsp healthy fat"
+            }
+          ] : [
+            {
+              time: "12:00 PM",
+              food: "6 whole eggs, 1/2 avocado, 2 cups spinach, 2 tbsp olive oil"
+            },
+            {
+              time: "4:00 PM",
+              food: "10oz fatty fish, 2 cups broccoli, 2 tbsp butter"
+            },
+            {
+              time: "8:00 PM",
+              food: "10oz ribeye steak, 2 cups asparagus, 1 tbsp butter, 1/2 avocado"
+            }
+          ]
+        }
       };
     }
   };
@@ -1577,91 +1555,37 @@ function App() {
   };
 
   const getDailySchedule = () => {
-    const isTrainingDay = currentDay % 7 !== 0; // Rest on every 7th day
-    const isFastingDay = currentDay % 2 !== 0; // Odd days are fasting days
+    const isTrainingDay = currentDay % 7 !== 0; // Assuming Sunday is rest day
     
     if (isTrainingDay) {
-      // Training day schedule
-      if (isFastingDay) {
-        // Fasting + Training day
-        return [
-          { time: "5:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
-          { time: "6:00 AM", activity: "FASTING WINDOW: Electrolytes + Sparkling water (no calories)" },
-          { time: "7:00 AM", activity: "Pre-workout supplements: Caffeine, Beta-Alanine (fasting-friendly)" },
-          { time: "8:30 AM", activity: "Mobility routine & Knee rehabilitation protocol" },
-          { time: "9:00 AM", activity: "Conditioning workout followed by ice bath" },
-          { time: "10:00 AM", activity: "FASTING WINDOW: Electrolytes + essential supplements" },
-          { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
-          { time: "2:00 PM", activity: "FASTING WINDOW: Green tea + Recovery protocols & Meditation" },
-          { time: "4:00 PM", activity: "Main strength session & Power development (fasted state)" },
-          { time: "5:00 PM", activity: "FEEDING WINDOW BEGINS: Post-workout nutrition" },
-          { time: "6:00 PM", activity: "Final boxing session & Mental warfare training" },
-          { time: "8:00 PM", activity: "Strategic nutrition (final meal of feeding window)" },
-          { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
-          { time: "10:00 PM", activity: "Sleep preparation & Final mindset programming" },
-          { time: "11:00 PM", activity: "Sleep" },
-        ];
-      } else {
-        // Feeding + Training day
-        return [
-          { time: "7:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
-          { time: "8:30 AM", activity: "Breakfast: Protein + complex carbs" },
-          { time: "9:00 AM", activity: "Mobility routine & Knee rehabilitation protocol" },
-          { time: "9:30 AM", activity: "Pre-workout nutrition and supplements" },
-          { time: "10:00 AM", activity: "Conditioning workout followed by ice bath" },
-          { time: "11:30 AM", activity: "Post-workout nutrition: Protein + carbohydrates" },
-          { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
-          { time: "1:30 PM", activity: "Lunch: High protein, moderate carbs, healthy fats" },
-          { time: "2:00 PM", activity: "Recovery protocols & Meditation" },
-          { time: "3:30 PM", activity: "Pre-workout snack: Protein + quick digesting carbs" },
-          { time: "4:00 PM", activity: "Main strength session & Power development" },
-          { time: "5:30 PM", activity: "Post-workout nutrition: Protein + carbohydrates" },
-          { time: "6:00 PM", activity: "Final boxing session & Mental warfare training" },
-          { time: "8:00 PM", activity: "Dinner: Lean protein + vegetables + healthy fats" },
-          { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
-          { time: "10:00 PM", activity: "Sleep preparation & Final mindset programming" },
-          { time: "11:00 PM", activity: "Sleep" },
-        ];
-      }
+      return [
+        { time: "7:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
+        { time: "8:30 AM", activity: "Mobility routine & Knee rehabilitation protocol" },
+        { time: "9:00 AM", activity: "Conditioning workout followed by ice bath" },
+        { time: "10:00 AM", activity: currentDay > 10 ? "First meal (if feeding window)" : "Electrolytes + supplements" },
+        { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
+        { time: "2:00 PM", activity: "Recovery protocols & Meditation" },
+        { time: "4:00 PM", activity: "Main strength session & Power development" },
+        { time: "6:00 PM", activity: "Final boxing session & Mental warfare training" },
+        { time: "8:00 PM", activity: currentDay > 10 ? "Strategic nutrition (if feeding window)" : "Recovery supplementation" },
+        { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
+        { time: "10:00 PM", activity: "Sleep preparation & Final mindset programming" },
+        { time: "11:00 PM", activity: "Sleep" }
+      ];
     } else {
-      // Rest day schedule
-      if (isFastingDay) {
-        // Fasting + Rest day
-        return [
-          { time: "8:00 AM", activity: "Wake-up, Cold exposure, Extended mindset work" },
-          { time: "8:30 AM", activity: "FASTING WINDOW: Electrolytes + Mineral water" },
-          { time: "9:00 AM", activity: "Extended mobility session & Injury prevention" },
-          { time: "10:00 AM", activity: "FASTING WINDOW: Black coffee + Light active recovery" },
-          { time: "12:00 PM", activity: "Mental training & Visualization" },
-          { time: "2:00 PM", activity: "FASTING WINDOW: Green tea + Recovery modalities" },
-          { time: "4:00 PM", activity: "Study fighting footage & Strategy development" },
-          { time: "5:00 PM", activity: "FEEDING WINDOW BEGINS: First meal after fast" },
-          { time: "6:00 PM", activity: "Light skill practice & Balance work" },
-          { time: "8:00 PM", activity: "Strategic nutrition (final meal of feeding window)" },
-          { time: "9:00 PM", activity: "Final recovery protocols" },
-          { time: "10:00 PM", activity: "Sleep preparation & Relaxation techniques" },
-          { time: "11:00 PM", activity: "Sleep" },
-        ];
-      } else {
-        // Feeding + Rest day
-        return [
-          { time: "8:00 AM", activity: "Wake-up, Cold exposure, Extended mindset work" },
-          { time: "8:30 AM", activity: "Breakfast: Protein-focused with healthy fats" },
-          { time: "9:00 AM", activity: "Extended mobility session & Injury prevention" },
-          { time: "10:00 AM", activity: "Light active recovery & Technique study" },
-          { time: "11:30 AM", activity: "Mid-morning snack: Protein + fruits" },
-          { time: "12:00 PM", activity: "Mental training & Visualization" },
-          { time: "1:30 PM", activity: "Lunch: Balanced meal with all macronutrients" },
-          { time: "2:00 PM", activity: "Recovery modalities & Contrast therapy" },
-          { time: "3:30 PM", activity: "Afternoon snack: Protein + vegetables" },
-          { time: "4:00 PM", activity: "Study fighting footage & Strategy development" },
-          { time: "6:00 PM", activity: "Light skill practice & Balance work" },
-          { time: "8:00 PM", activity: "Dinner: High-protein meal with vegetables" },
-          { time: "9:00 PM", activity: "Final recovery protocols" },
-          { time: "10:00 PM", activity: "Sleep preparation & Relaxation techniques" },
-          { time: "11:00 PM", activity: "Sleep" },
-        ];
-      }
+      return [
+        { time: "8:00 AM", activity: "Wake-up, Cold exposure, Extended mindset work" },
+        { time: "9:00 AM", activity: "Extended mobility session & Injury prevention" },
+        { time: "10:00 AM", activity: "Light active recovery & Technique study" },
+        { time: "12:00 PM", activity: "Mental training & Visualization" },
+        { time: "2:00 PM", activity: "Recovery modalities & Contrast therapy" },
+        { time: "4:00 PM", activity: "Study fighting footage & Strategy development" },
+        { time: "6:00 PM", activity: "Light skill practice & Balance work" },
+        { time: "8:00 PM", activity: "Strategic nutrition & Supplementation" },
+        { time: "9:00 PM", activity: "Final recovery protocols" },
+        { time: "10:00 PM", activity: "Sleep preparation & Relaxation techniques" },
+        { time: "11:00 PM", activity: "Sleep" }
+      ];
     }
   };
 
