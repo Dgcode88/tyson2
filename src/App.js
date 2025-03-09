@@ -1577,92 +1577,92 @@ function App() {
   };
 
   const getDailySchedule = () => {
-    // Determine if today is a fasting day (for example, odd days or specific days per phase)
-    const isFastingDay = currentDay % 4 === 0; // Example: Every 4th day is a fasting day
-    
-    // Common schedule items for all days (fasting and non-fasting)
-    const commonItems = [
-      { time: "5:30 AM", activity: "Wake up, hydration (16oz water with lemon and Himalayan salt)" },
-      { time: "5:45 AM", activity: "Morning supplements: Vitamin D, Fish Oil, Multivitamin (on empty stomach)" },
-      { time: "6:00 AM", activity: "Mindset work - visualization, affirmations" },
-      { time: "7:00 AM", activity: isFastingDay ? "Pre-workout supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" : "Pre-workout nutrition and supplements: Creatine, Beta-Alanine, Caffeine (30 min before training)" },
-      { time: "9:30 PM", activity: "Evening recovery protocol" },
-      { time: "10:00 PM", activity: "Sleep" },
-    ];
-
-    // Training day specific schedule
-    const trainingDayItems = [
-      { time: "7:30 AM", activity: "Training session" },
-      { time: "9:30 AM", activity: isFastingDay ? "Electrolytes and essential supplements (maintain fast)" : "Post-workout supplements: Protein, BCAAs, Electrolytes (immediately after training)" },
-    ];
-
-    // Rest day specific schedule
-    const restDayItems = [
-      { time: "7:30 AM", activity: "Active recovery: Mobility work or light cardio" },
-      { time: "9:30 AM", activity: "Rehabilitation exercises" },
-    ];
-
-    // Non-fasting day meal items
-    const mealItems = isFastingDay ? [] : [
-      { time: "6:30 AM", activity: "Breakfast: Protein (eggs/protein shake), complex carbs (oatmeal/sweet potato), healthy fats (avocado/nuts)" },
-      { time: "10:00 AM", activity: "Mid-morning protein shake + Digestive enzymes" },
-      { time: "1:00 PM", activity: "Lunch: Lean protein (chicken/fish), complex carbs (rice/quinoa), vegetables + Zinc supplement (with meal)" },
-      { time: "4:00 PM", activity: "Mid-afternoon snack: Protein bar or Greek yogurt with berries + Magnesium (with food)" },
-      { time: "7:00 PM", activity: "Dinner: Lean protein (beef/salmon), vegetables, healthy fats (olive oil/nuts)" },
-    ];
-    
-    // Fasting day specific items
-    const fastingDayItems = isFastingDay ? [
-      { time: "9:00 AM", activity: "FASTING WINDOW: Electrolytes + Sparkling water (no calories)" },
-      { time: "12:00 PM", activity: "FASTING WINDOW: Black coffee or green tea + Electrolytes (maintain hydration)" },
-      { time: "3:00 PM", activity: "FASTING WINDOW: Apple cider vinegar water + Minerals (maintain electrolyte balance)" },
-      { time: "6:00 PM", activity: "FASTING WINDOW: Sodium + Potassium in water (maintain electrolyte balance)" },
-      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
-    ] : [
-      { time: "9:00 PM", activity: "Evening supplements: Ashwagandha, ZMA (30 min before bed)" },
-    ];
-
-    // Phase-specific items
-    const phaseItems = [];
-    switch (currentPhase) {
-      case 1: // Foundation
-        phaseItems.push(
-          { time: "3:00 PM", activity: "Electrolyte drink + Vitamin C (between meals)" },
-          isFastingDay ? { time: "5:00 PM", activity: "Foundation phase: Extended fasting window (prioritizing autophagy)" } :
-          { time: "11:00 AM", activity: "Foundation phase snack: Banana with almond butter (focus on nutrient density)" }
-        );
-        break;
-      case 2: // Intensification
-        phaseItems.push(
-          { time: "2:30 PM", activity: "Intra-workout nutrition: EAAs, Electrolytes (during intense sessions)" },
-          isFastingDay ? { time: "4:00 PM", activity: "Intensification phase: Strategic electrolytes during fasting window" } :
-          { time: "11:30 AM", activity: "Intensification phase meal: Higher carb intake to fuel workouts - rice, potatoes, or pasta" }
-        );
-        break;
-      case 3: // Peak/Maintenance
-        phaseItems.push(
-          { time: "11:30 AM", activity: isFastingDay ? "Pre-lunch: Extended fasting window for metabolic flexibility" : "Pre-lunch supplements: Digestive enzymes (15 min before meal)" },
-          { time: "3:00 PM", activity: "Performance supplements: Beta-Alanine, Citrulline (1 hr before evening session)" },
-          isFastingDay ? { time: "5:00 PM", activity: "Peak phase: Strategic electrolytes during extended fasting" } :
-          { time: "8:30 AM", activity: "Peak phase nutrition: Protein-focused meal with strategic carb timing before/after workouts" }
-        );
-        break;
-    }
-
     const isTrainingDay = currentDay % 7 !== 0; // Rest on every 7th day
-
-    // Sort by time and return combined schedule
-    return [
-      ...commonItems,
-      ...(isTrainingDay ? trainingDayItems : restDayItems),
-      ...mealItems,
-      ...fastingDayItems,
-      ...phaseItems,
-    ].sort((a, b) => {
-      const timeA = new Date(`1970/01/01 ${a.time}`);
-      const timeB = new Date(`1970/01/01 ${b.time}`);
-      return timeA - timeB;
-    });
+    const isFastingDay = currentDay % 2 !== 0; // Odd days are fasting days
+    
+    if (isTrainingDay) {
+      // Training day schedule
+      if (isFastingDay) {
+        // Fasting + Training day
+        return [
+          { time: "5:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
+          { time: "6:00 AM", activity: "FASTING WINDOW: Electrolytes + Sparkling water (no calories)" },
+          { time: "7:00 AM", activity: "Pre-workout supplements: Caffeine, Beta-Alanine (fasting-friendly)" },
+          { time: "8:30 AM", activity: "Mobility routine & Knee rehabilitation protocol" },
+          { time: "9:00 AM", activity: "Conditioning workout followed by ice bath" },
+          { time: "10:00 AM", activity: "FASTING WINDOW: Electrolytes + essential supplements" },
+          { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
+          { time: "2:00 PM", activity: "FASTING WINDOW: Green tea + Recovery protocols & Meditation" },
+          { time: "4:00 PM", activity: "Main strength session & Power development (fasted state)" },
+          { time: "5:00 PM", activity: "FEEDING WINDOW BEGINS: Post-workout nutrition" },
+          { time: "6:00 PM", activity: "Final boxing session & Mental warfare training" },
+          { time: "8:00 PM", activity: "Strategic nutrition (final meal of feeding window)" },
+          { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
+          { time: "10:00 PM", activity: "Sleep preparation & Final mindset programming" },
+          { time: "11:00 PM", activity: "Sleep" },
+        ];
+      } else {
+        // Feeding + Training day
+        return [
+          { time: "7:30 AM", activity: "Wake-up, Cold exposure, Mindset work" },
+          { time: "8:30 AM", activity: "Breakfast: Protein + complex carbs" },
+          { time: "9:00 AM", activity: "Mobility routine & Knee rehabilitation protocol" },
+          { time: "9:30 AM", activity: "Pre-workout nutrition and supplements" },
+          { time: "10:00 AM", activity: "Conditioning workout followed by ice bath" },
+          { time: "11:30 AM", activity: "Post-workout nutrition: Protein + carbohydrates" },
+          { time: "12:00 PM", activity: "Shadow boxing & Technical development" },
+          { time: "1:30 PM", activity: "Lunch: High protein, moderate carbs, healthy fats" },
+          { time: "2:00 PM", activity: "Recovery protocols & Meditation" },
+          { time: "3:30 PM", activity: "Pre-workout snack: Protein + quick digesting carbs" },
+          { time: "4:00 PM", activity: "Main strength session & Power development" },
+          { time: "5:30 PM", activity: "Post-workout nutrition: Protein + carbohydrates" },
+          { time: "6:00 PM", activity: "Final boxing session & Mental warfare training" },
+          { time: "8:00 PM", activity: "Dinner: Lean protein + vegetables + healthy fats" },
+          { time: "9:00 PM", activity: "Final knee rehab & Contrast therapy" },
+          { time: "10:00 PM", activity: "Sleep preparation & Final mindset programming" },
+          { time: "11:00 PM", activity: "Sleep" },
+        ];
+      }
+    } else {
+      // Rest day schedule
+      if (isFastingDay) {
+        // Fasting + Rest day
+        return [
+          { time: "8:00 AM", activity: "Wake-up, Cold exposure, Extended mindset work" },
+          { time: "8:30 AM", activity: "FASTING WINDOW: Electrolytes + Mineral water" },
+          { time: "9:00 AM", activity: "Extended mobility session & Injury prevention" },
+          { time: "10:00 AM", activity: "FASTING WINDOW: Black coffee + Light active recovery" },
+          { time: "12:00 PM", activity: "Mental training & Visualization" },
+          { time: "2:00 PM", activity: "FASTING WINDOW: Green tea + Recovery modalities" },
+          { time: "4:00 PM", activity: "Study fighting footage & Strategy development" },
+          { time: "5:00 PM", activity: "FEEDING WINDOW BEGINS: First meal after fast" },
+          { time: "6:00 PM", activity: "Light skill practice & Balance work" },
+          { time: "8:00 PM", activity: "Strategic nutrition (final meal of feeding window)" },
+          { time: "9:00 PM", activity: "Final recovery protocols" },
+          { time: "10:00 PM", activity: "Sleep preparation & Relaxation techniques" },
+          { time: "11:00 PM", activity: "Sleep" },
+        ];
+      } else {
+        // Feeding + Rest day
+        return [
+          { time: "8:00 AM", activity: "Wake-up, Cold exposure, Extended mindset work" },
+          { time: "8:30 AM", activity: "Breakfast: Protein-focused with healthy fats" },
+          { time: "9:00 AM", activity: "Extended mobility session & Injury prevention" },
+          { time: "10:00 AM", activity: "Light active recovery & Technique study" },
+          { time: "11:30 AM", activity: "Mid-morning snack: Protein + fruits" },
+          { time: "12:00 PM", activity: "Mental training & Visualization" },
+          { time: "1:30 PM", activity: "Lunch: Balanced meal with all macronutrients" },
+          { time: "2:00 PM", activity: "Recovery modalities & Contrast therapy" },
+          { time: "3:30 PM", activity: "Afternoon snack: Protein + vegetables" },
+          { time: "4:00 PM", activity: "Study fighting footage & Strategy development" },
+          { time: "6:00 PM", activity: "Light skill practice & Balance work" },
+          { time: "8:00 PM", activity: "Dinner: High-protein meal with vegetables" },
+          { time: "9:00 PM", activity: "Final recovery protocols" },
+          { time: "10:00 PM", activity: "Sleep preparation & Relaxation techniques" },
+          { time: "11:00 PM", activity: "Sleep" },
+        ];
+      }
+    }
   };
 
   const getDailyChecklist = () => {
