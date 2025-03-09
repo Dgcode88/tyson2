@@ -1,10 +1,13 @@
 {
   "name": "react",
   "version": "1.0.0",
-  "description": "",
+  "description": "90-Day Tyson Transformation",
   "keywords": [],
   "main": "src/index.tsx",
   "homepage": "https://Dgcode88.github.io/tyson2",
+  "engines": {
+    "node": ">=16.x"
+  },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
