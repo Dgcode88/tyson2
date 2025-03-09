@@ -530,10 +530,10 @@ const Tabs = styled.div`
 `;
 
 function App() {
-  // Initialize current day from localStorage or default to 1
+  // Initialize current day from localStorage or default to 31
   const [currentDay, setCurrentDay] = useState(() => {
     const savedDay = localStorage.getItem("tysonDashboardDay");
-    return savedDay ? parseInt(savedDay) : 1;
+    return savedDay ? parseInt(savedDay) : 31;
   });
 
   // Initialize completed days from localStorage
@@ -543,9 +543,11 @@ function App() {
   });
 
   const [tempDay, setTempDay] = useState(currentDay);
-  const [activeTab, setActiveTab] = useState("daily-plan");
   const [showDetails, setShowDetails] = useState({});
   const [checklist, setChecklist] = useState({});
+  // Set the default active tab to "schedule" instead of "training"
+  const [activeTab, setActiveTab] = useState("schedule");
+
   const totalDays = 90;
 
   // Save current day to localStorage whenever it changes
@@ -1810,6 +1812,12 @@ function App() {
       <div>
         <Tabs>
           <TabButton
+            active={activeTab === "schedule"}
+            onClick={() => setActiveTab("schedule")}
+          >
+            Schedule
+          </TabButton>
+          <TabButton
             active={activeTab === "training"}
             onClick={() => setActiveTab("training")}
           >
@@ -1844,12 +1852,6 @@ function App() {
             onClick={() => setActiveTab("shoppingList")}
           >
             Shopping List
-          </TabButton>
-          <TabButton
-            active={activeTab === "schedule"}
-            onClick={() => setActiveTab("schedule")}
-          >
-            Schedule
           </TabButton>
           <TabButton
             active={activeTab === "checklist"}
