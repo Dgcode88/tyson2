@@ -1,15 +1,16 @@
 {
-  "short_name": "Tyson Transformation",
+  "short_name": "Tyson 90",
   "name": "90-Day Tyson Transformation",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#1a202c"
-} 
+  "theme_color": "#0B0E14",
+  "background_color": "#0B0E14"
+}
