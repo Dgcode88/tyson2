@@ -42,7 +42,7 @@ function Head({ title, sub, badge }) {
 // Responsive multi-column grid so wide screens are actually used.
 const Cols = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: clamp(20px, 2.6vw, 36px);
   align-items: start;
 `;
@@ -140,7 +140,9 @@ const DayPartRange = styled.span`
 
 const PartGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  /* min(360px, 100%) so a narrow phone collapses to one full-width column
+     instead of forcing the whole page wider than the viewport. */
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
   gap: 2px clamp(16px, 2.5vw, 40px);
 `;
 
@@ -437,7 +439,7 @@ export function RecoveryPanel({ currentPhase, currentDay, accent }) {
 // ── Shopping ──────────────────────────────────────────────────────────────────
 const ShopGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: clamp(16px, 2vw, 22px);
 `;
 
@@ -486,7 +488,7 @@ export function ShoppingPanel({ currentDay, currentPhase, accent }) {
 // ── Checklist ─────────────────────────────────────────────────────────────────
 const CheckGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
   gap: 0 clamp(20px, 3vw, 48px);
 `;
 

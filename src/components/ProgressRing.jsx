@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 const Wrap = styled.div`
   position: relative;
@@ -60,7 +60,11 @@ const Small = styled.span`
 `;
 
 const FlashCircle = styled(motion.circle)`
-  ${({ $flash }) => $flash && `animation: ${ringFlash} 0.7s ease-out;`}
+  ${({ $flash }) =>
+    $flash &&
+    css`
+      animation: ${ringFlash} 0.7s ease-out;
+    `}
 `;
 
 // A circular progress arc tinted with the current phase gradient. The arc value

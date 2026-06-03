@@ -6,58 +6,96 @@ import { phaseAccent } from "../theme.js";
 import { useCountUp, Burst } from "./cinematic/index.jsx";
 import ProgressRing from "./ProgressRing.jsx";
 import DaySelector from "./DaySelector.jsx";
+import FighterSilhouette from "./FighterSilhouette.jsx";
+import { phaseMission, phaseOrder, restMission, restOrder } from "../data/creed.js";
 
 const Hero = styled(GlassCard)`
-  padding: clamp(18px, 2.4vw, 32px);
+  position: relative;
+  padding: clamp(16px, 2vw, 28px);
   overflow: hidden;
 `;
 
-const Top = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: clamp(20px, 3vw, 44px);
+// The fighter, standing in the corner of the room. Atmosphere, not illustration.
+const Ghost = styled.div`
+  position: absolute;
+  right: 22%;
+  bottom: -8%;
+  width: clamp(200px, 22vw, 340px);
+  height: 122%;
+  opacity: 0.1;
+  pointer-events: none;
+  mask-image: linear-gradient(to top, transparent 2%, #000 40%);
+  -webkit-mask-image: linear-gradient(to top, transparent 2%, #000 40%);
 
-  @media (max-width: 860px) {
+  @media (max-width: 1080px) {
+    right: -8%;
+    opacity: 0.07;
+    width: 300px;
+  }
+`;
+
+// A faint accent wash bleeding up from the floor of the card.
+const FloorGlow = styled.div`
+  position: absolute;
+  inset: auto -10% -40% -10%;
+  height: 70%;
+  background: radial-gradient(60% 100% at 60% 100%, ${({ $accent }) => $accent.glow}, transparent 70%);
+  opacity: 0.45;
+  pointer-events: none;
+`;
+
+const Top = styled.div`
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) clamp(218px, 22vw, 262px);
+  align-items: start;
+  gap: clamp(16px, 2.2vw, 34px);
+
+  @media (max-width: 1080px) {
     grid-template-columns: 1fr;
     justify-items: center;
     text-align: center;
+    gap: clamp(12px, 2vw, 20px);
   }
 `;
 
 const RingWrap = styled.div`
   position: relative;
+  align-self: center;
 `;
 
 const Info = styled.div`
   min-width: 0;
+  width: 100%;
 `;
 
 const Eyebrow = styled.p`
-  margin: 0 0 12px;
+  margin: 0 0 6px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3em;
+  font-weight: 800;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.color.textMuted};
+  color: ${({ theme }) => theme.color.blood};
 `;
 
-const PhaseNum = styled.span`
-  display: block;
-  font-size: 13px;
+const Meta = styled.p`
+  margin: 0 0 4px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.color.textDim};
-  margin-bottom: 8px;
-  -webkit-text-fill-color: ${({ theme }) => theme.color.textDim};
 `;
 
 const PhaseName = styled.h1`
-  font-size: clamp(32px, 4.4vw, 62px);
-  font-weight: 900;
-  line-height: 0.92;
-  letter-spacing: -0.035em;
-  word-break: break-word;
+  font-family: ${({ theme }) => theme.font.brutal};
+  font-size: clamp(34px, 5vw, 92px);
+  line-height: 0.88;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
   margin: 0;
   background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}, ${$accent.to})`};
   -webkit-background-clip: text;
@@ -66,21 +104,61 @@ const PhaseName = styled.h1`
   animation: stamp 0.6s cubic-bezier(0.2, 0.85, 0.25, 1);
 `;
 
-const Desc = styled.p`
-  margin: 12px 0 0;
-  font-size: clamp(14px, 1.2vw, 17px);
-  line-height: 1.45;
-  color: ${({ theme }) => theme.color.textMuted};
-  max-width: 52ch;
+const Mission = styled.p`
+  margin: 10px 0 0;
+  font-size: clamp(14px, 1.2vw, 18px);
+  line-height: 1.38;
+  font-weight: 600;
+  color: ${({ theme }) => theme.color.text};
+  max-width: 50ch;
 
-  @media (max-width: 860px) {
+  b {
+    color: ${({ theme }) => theme.color.gold};
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 1080px) {
     margin-left: auto;
     margin-right: auto;
   }
 `;
 
+// ── War cry (editable) ──────────────────────────────────────────────────────
+const CryRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: ${({ theme }) => theme.radius.md};
+  border: 1px dashed ${({ theme }) => theme.color.border};
+  background: ${({ theme }) => theme.color.goldSoft};
+  max-width: 100%;
+`;
+
+const CryLabel = styled.span`
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textDim};
+`;
+
+const CryText = styled.span`
+  font-family: ${({ theme }) => theme.font.brutal};
+  font-size: clamp(14px, 1.4vw, 19px);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.gold};
+`;
+
 const PhaseBar = styled.div`
-  margin-top: 18px;
+  margin-top: 14px;
+  position: relative;
+  z-index: 1;
 `;
 
 const BarHead = styled.div`
@@ -88,7 +166,7 @@ const BarHead = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 
   @media (max-width: 560px) {
     flex-wrap: wrap;
@@ -99,7 +177,7 @@ const BarHead = styled.div`
 const BarLabel = styled.span`
   flex: 1;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -112,7 +190,7 @@ const BarLabel = styled.span`
 `;
 
 const Track = styled.div`
-  height: 12px;
+  height: 10px;
   border-radius: ${({ theme }) => theme.radius.pill};
   background: ${({ theme }) => theme.color.track};
   overflow: hidden;
@@ -129,7 +207,7 @@ const PhaseJump = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 15px;
+  padding: 7px 13px;
   border-radius: ${({ theme }) => theme.radius.pill};
   border: 1px solid ${({ $accent }) => $accent.from}55;
   background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}1f, ${$accent.to}14)`};
@@ -153,10 +231,55 @@ const PhaseJump = styled.button`
   }
 `;
 
-const Controls = styled.div`
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid ${({ theme }) => theme.color.border};
+// ── Right column: rank badge above the day console ──────────────────────────
+const Aside = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+
+  @media (max-width: 1080px) {
+    max-width: 380px;
+    margin-top: 4px;
+  }
+`;
+
+const Badge = styled.span`
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px 6px 11px;
+  border-radius: ${({ theme }) => theme.radius.pill};
+  border: 1px solid ${({ $c }) => `${$c}66`};
+  background: ${({ $c }) => `${$c}1a`};
+  white-space: nowrap;
+  /* Pops when the rank id changes (re-keyed by the parent). */
+  animation: rankPop 0.6s cubic-bezier(0.2, 0.85, 0.25, 1);
+
+  b {
+    font-family: ${({ theme }) => theme.font.display};
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ${({ $c }) => $c};
+  }
+  i {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 700;
+    color: ${({ theme }) => theme.color.textDim};
+  }
+`;
+
+const Dot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ $c }) => $c};
+  box-shadow: 0 0 10px ${({ $c }) => $c};
 `;
 
 export default function StatusHeader({
@@ -165,13 +288,14 @@ export default function StatusHeader({
   currentPhase,
   accent,
   phaseName,
-  phaseDescription,
   phaseProgress,
   phaseDay,
   nextPhaseName,
   prevPhaseName,
   completed,
   burst,
+  rank,
+  warCry,
   onPrev,
   onNext,
   onJump,
@@ -185,13 +309,23 @@ export default function StatusHeader({
   const prevAccent = phaseAccent(currentPhase - 1);
   const nextAccent = phaseAccent(currentPhase + 1);
 
+  const isRest = currentDay % 7 === 0;
+  const mission = isRest ? restMission : phaseMission[currentPhase];
+  const order = isRest ? restOrder : phaseOrder[currentPhase];
+
   return (
     <Hero>
+      <FloorGlow $accent={accent} aria-hidden="true" />
+      <Ghost aria-hidden="true">
+        <FighterSilhouette accent={accent} id={`hero-${currentPhase}`} />
+      </Ghost>
+
       <Top>
         <RingWrap className="reveal">
           <ProgressRing
             value={(currentDay / totalDays) * 100}
             accent={accent}
+            size={188}
             big={dayCount}
             small={`Day / ${totalDays}`}
             glow={`${accent.from}66`}
@@ -203,19 +337,26 @@ export default function StatusHeader({
 
         <Info>
           <Eyebrow className="reveal" style={{ "--d": ".06s" }}>
-            90-Day Tyson Transformation
+            Today's Mission
           </Eyebrow>
+          <Meta className="reveal" style={{ "--d": ".1s" }}>
+            Phase {currentPhase} · Day {dayCount} of {totalDays} · {pctCount}% complete
+          </Meta>
+
           <PhaseName key={currentPhase} $accent={accent}>
-            <PhaseNum>
-              PHASE {currentPhase} · {pctCount}% COMPLETE
-            </PhaseNum>
             {phaseName}
           </PhaseName>
-          <Desc className="reveal" style={{ "--d": ".16s" }}>
-            {phaseDescription}
-          </Desc>
 
-          <PhaseBar className="reveal" style={{ "--d": ".22s" }}>
+          <Mission className="reveal" style={{ "--d": ".16s" }}>
+            <b>{order}</b> {mission}
+          </Mission>
+
+          <CryRow className="reveal" style={{ "--d": ".22s" }}>
+            <CryLabel>War cry</CryLabel>
+            <CryText>{warCry}</CryText>
+          </CryRow>
+
+          <PhaseBar className="reveal" style={{ "--d": ".28s" }}>
             <BarHead>
               {prevPhaseName ? (
                 <PhaseJump $accent={prevAccent} onClick={onPrevPhase}>
@@ -245,19 +386,26 @@ export default function StatusHeader({
             </Track>
           </PhaseBar>
         </Info>
-      </Top>
 
-      <Controls className="reveal" style={{ "--d": ".3s" }}>
-        <DaySelector
-          currentDay={currentDay}
-          totalDays={totalDays}
-          completed={completed}
-          onPrev={onPrev}
-          onNext={onNext}
-          onJump={onJump}
-          onToggleComplete={onToggleComplete}
-        />
-      </Controls>
+        <Aside className="reveal" style={{ "--d": ".2s" }}>
+          {rank && (
+            <Badge key={rank.id} $c={rank.color} title={rank.blurb}>
+              <Dot $c={rank.color} aria-hidden="true" />
+              <b>{rank.name}</b>
+              <i>· {rank.conquered} conquered</i>
+            </Badge>
+          )}
+          <DaySelector
+            currentDay={currentDay}
+            totalDays={totalDays}
+            completed={completed}
+            onPrev={onPrev}
+            onNext={onNext}
+            onJump={onJump}
+            onToggleComplete={onToggleComplete}
+          />
+        </Aside>
+      </Top>
     </Hero>
   );
 }

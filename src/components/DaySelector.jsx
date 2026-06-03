@@ -1,30 +1,35 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { LuChevronLeft, LuChevronRight, LuCheck } from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight, LuCheck, LuLock } from "react-icons/lu";
 
-const Row = styled.div`
+// A compact, self-contained day console: step the day, type a day to jump, or
+// lock it in. The day number IS the jump field — no separate block. Stacks
+// vertically so it sits in the hero's top-right on desktop and full-width on mobile.
+const Console = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 18px;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
 `;
 
-const Stepper = styled.div`
+const StepRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
 `;
 
 const RoundBtn = styled.button`
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.color.border};
   background: ${({ theme }) => theme.color.surface};
   color: ${({ theme }) => theme.color.text};
-  font-size: 20px;
+  font-size: 19px;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 
@@ -39,91 +44,43 @@ const RoundBtn = styled.button`
   }
 `;
 
-const DayPill = styled.div`
+// The day pill is a tiny form — type in the number and press Enter to jump.
+const DayPill = styled.form`
+  flex: 1;
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  padding: 8px 16px;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 12px;
   border-radius: ${({ theme }) => theme.radius.md};
   background: ${({ theme }) => theme.color.surface};
   border: 1px solid ${({ theme }) => theme.color.border};
-  min-width: 96px;
-  justify-content: center;
-`;
-
-const DayWord = styled.span`
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: ${({ theme }) => theme.color.textMuted};
-`;
-
-const DayNum = styled.span`
-  font-family: ${({ theme }) => theme.font.display};
-  font-size: 28px;
-  font-weight: 900;
-  color: ${({ theme }) => theme.color.text};
-`;
-
-const DayTot = styled.span`
-  font-size: 14px;
-  color: ${({ theme }) => theme.color.textDim};
-`;
-
-const Complete = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 16px;
-  border-radius: ${({ theme }) => theme.radius.pill};
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.15s ease;
-  border: 1px solid
-    ${({ theme, $on }) => ($on ? "transparent" : theme.color.border)};
-  background: ${({ theme, $on }) => ($on ? theme.color.green : theme.color.surface)};
-  color: ${({ theme, $on }) => ($on ? theme.color.greenInk : theme.color.textMuted)};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.color.borderStrong};
+  transition: border-color 0.15s ease;
+  &:focus-within {
+    border-color: ${({ theme }) => theme.color.gold};
   }
 `;
 
-const Box = styled.span`
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  display: grid;
-  place-items: center;
-  border: 2px solid ${({ theme, $on }) => ($on ? theme.color.greenInk : theme.color.textDim)};
-  font-size: 12px;
-`;
-
-const Jump = styled.form`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-`;
-
-const JumpLabel = styled.span`
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+const DayWord = styled.span`
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
   color: ${({ theme }) => theme.color.textMuted};
 `;
 
-const NumInput = styled.input`
-  width: 64px;
-  padding: 9px 8px;
+// Styled to read as the big day number, but it's an input you can jump with.
+const DayInput = styled.input`
+  width: 2.2em;
   text-align: center;
-  font-size: 15px;
-  font-weight: 700;
+  font-family: ${({ theme }) => theme.font.display};
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
   color: ${({ theme }) => theme.color.gold};
-  background: ${({ theme }) => theme.color.bg};
-  border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: ${({ theme }) => theme.radius.sm};
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: text;
   appearance: textfield;
   -moz-appearance: textfield;
   &::-webkit-inner-spin-button,
@@ -131,22 +88,77 @@ const NumInput = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
+  &:focus {
+    outline: none;
+  }
 `;
 
-const GoBtn = styled.button`
-  padding: 9px 16px;
-  border: none;
-  border-radius: ${({ theme }) => theme.radius.sm};
-  background: ${({ theme }) => theme.color.teal};
-  color: ${({ theme }) => theme.color.tealInk};
-  font-weight: 800;
+const DayTot = styled.span`
   font-size: 13px;
-  letter-spacing: 0.04em;
+  color: ${({ theme }) => theme.color.textDim};
+`;
+
+const CompleteWrap = styled.div`
+  position: relative;
+`;
+
+const Complete = styled.button`
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: ${({ theme }) => theme.radius.pill};
   cursor: pointer;
-  transition: filter 0.15s ease;
+  font-family: ${({ theme }) => theme.font.display};
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  border: 1px solid
+    ${({ theme, $on }) => ($on ? "transparent" : theme.color.borderStrong)};
+  background: ${({ theme, $on }) =>
+    $on ? theme.color.green : "linear-gradient(100deg, rgba(225,29,42,0.18), rgba(225,29,42,0.07))"};
+  color: ${({ theme, $on }) => ($on ? theme.color.greenInk : theme.color.text)};
+  box-shadow: ${({ theme, $on }) => ($on ? "0 8px 24px -12px " + theme.color.green : "none")};
+
   &:hover {
-    filter: brightness(1.08);
+    transform: translateY(-1px);
+    border-color: ${({ theme, $on }) => ($on ? "transparent" : theme.color.blood)};
+    filter: ${({ $on }) => ($on ? "brightness(1.04)" : "none")};
   }
+`;
+
+const Box = styled.span`
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  border: 2px solid ${({ theme, $on }) => ($on ? theme.color.greenInk : theme.color.blood)};
+  font-size: 12px;
+`;
+
+// "LOCKED IN" stamp that slams in when the day is locked.
+const Stamp = styled.span`
+  position: absolute;
+  left: 50%;
+  top: -13px;
+  transform: translateX(-50%);
+  font-family: ${({ theme }) => theme.font.brutal};
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: ${({ theme }) => theme.color.green};
+  border: 2px solid ${({ theme }) => theme.color.green};
+  border-radius: 6px;
+  padding: 2px 9px;
+  background: ${({ theme }) => theme.color.bg};
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1;
+  animation: oathStamp 0.6s cubic-bezier(0.2, 0.85, 0.25, 1) both;
 `;
 
 export default function DaySelector({
@@ -160,55 +172,60 @@ export default function DaySelector({
 }) {
   const [tempDay, setTempDay] = useState(currentDay);
 
-  // Keep the jump input in sync when the day changes elsewhere (arrows, phase jump).
+  // Keep the day field in sync when the day changes elsewhere (arrows, phase jump).
   useEffect(() => {
     setTempDay(currentDay);
   }, [currentDay]);
 
-  const submit = (e) => {
-    e.preventDefault();
+  const jump = () => {
     const n = parseInt(tempDay, 10);
-    if (!isNaN(n) && n >= 1 && n <= totalDays) onJump(n);
+    if (!isNaN(n) && n >= 1 && n <= totalDays && n !== currentDay) onJump(n);
+    else setTempDay(currentDay); // snap back on invalid / unchanged
   };
 
   return (
-    <Row>
-      <Stepper>
+    <Console>
+      <StepRow>
         <RoundBtn onClick={onPrev} disabled={currentDay === 1} aria-label="Previous day">
           <LuChevronLeft />
         </RoundBtn>
-        <DayPill>
+        <DayPill
+          onSubmit={(e) => {
+            e.preventDefault();
+            jump();
+          }}
+        >
           <DayWord>DAY</DayWord>
-          <DayNum>{currentDay}</DayNum>
+          <DayInput
+            type="number"
+            min="1"
+            max={totalDays}
+            value={tempDay}
+            onChange={(e) => setTempDay(e.target.value)}
+            onBlur={jump}
+            onFocus={(e) => e.target.select()}
+            aria-label="Current day — type a day and press Enter to jump"
+            title="Type a day and press Enter to jump"
+          />
           <DayTot>/ {totalDays}</DayTot>
         </DayPill>
         <RoundBtn onClick={onNext} disabled={currentDay === totalDays} aria-label="Next day">
           <LuChevronRight />
         </RoundBtn>
-      </Stepper>
+      </StepRow>
 
-      <Complete
-        type="button"
-        $on={!!completed}
-        onClick={onToggleComplete}
-        aria-pressed={!!completed}
-      >
-        <Box $on={!!completed}>{completed && <LuCheck />}</Box>
-        {completed ? "Day complete" : "Mark day complete"}
-      </Complete>
-
-      <Jump onSubmit={submit}>
-        <JumpLabel>JUMP TO</JumpLabel>
-        <NumInput
-          type="number"
-          min="1"
-          max={totalDays}
-          value={tempDay}
-          onChange={(e) => setTempDay(e.target.value)}
-          aria-label="Jump to day"
-        />
-        <GoBtn type="submit" aria-label="Go to day">GO</GoBtn>
-      </Jump>
-    </Row>
+      <CompleteWrap>
+        {completed && <Stamp aria-hidden="true">LOCKED IN</Stamp>}
+        <Complete
+          type="button"
+          $on={!!completed}
+          onClick={onToggleComplete}
+          aria-pressed={!!completed}
+        >
+          <Box $on={!!completed}>{completed ? <LuCheck /> : <LuLock />}</Box>
+          {completed ? "Locked in" : "Lock in the day"}
+        </Complete>
+      </CompleteWrap>
+    </Console>
   );
 }

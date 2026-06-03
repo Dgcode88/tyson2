@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import { LuFlame, LuCheckCircle2, LuTrendingUp } from "react-icons/lu";
+import { LuFlame, LuMedal, LuTrendingUp } from "react-icons/lu";
 import { GlassCard } from "./ui.jsx";
 import { useCountUp } from "./cinematic/index.jsx";
-import { TOTAL_DAYS, getCurrentPhaseProgress, phaseMeta } from "../data/program.js";
+import { TOTAL_DAYS, getCurrentPhaseProgress } from "../data/program.js";
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 1.6vw, 20px);
+  gap: clamp(10px, 1.2vw, 16px);
 
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
@@ -15,10 +15,10 @@ const Grid = styled.div`
 `;
 
 const Stat = styled(GlassCard)`
-  padding: clamp(18px, 2.2vw, 26px);
+  padding: clamp(11px, 1.3vw, 16px) clamp(14px, 1.6vw, 20px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 5px;
   transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 
   &:hover {
@@ -38,7 +38,7 @@ const Topline = styled.div`
 const Label = styled.span`
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.color.textMuted};
 `;
@@ -46,8 +46,8 @@ const Label = styled.span`
 const Num = styled.span`
   font-family: ${({ theme }) => theme.font.display};
   font-weight: 900;
-  font-size: clamp(38px, 4.4vw, 56px);
-  line-height: 0.86;
+  font-size: clamp(28px, 2.8vw, 40px);
+  line-height: 0.9;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   color: ${({ theme }) => theme.color.text};
@@ -59,11 +59,21 @@ const Suffix = styled.span`
   margin-left: 2px;
 `;
 
+// The prominent context line under the number (e.g. "DAYS TO CONTENDER").
+const Unit = styled.span`
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${({ $c, theme }) => $c || theme.color.textMuted};
+`;
+
 const Bar = styled.div`
-  height: 6px;
+  height: 5px;
   border-radius: ${({ theme }) => theme.radius.pill};
   background: ${({ theme }) => theme.color.track};
   overflow: hidden;
+  margin-top: 2px;
 `;
 
 const BarFill = styled.i`
@@ -77,22 +87,23 @@ const BarFill = styled.i`
 `;
 
 const Foot = styled.span`
-  font-size: 12px;
+  font-size: 11px;
   color: ${({ theme }) => theme.color.textDim};
 `;
 
-function StatCard({ icon: Icon, value, suffix, label, foot, pct, accent, d }) {
+function StatCard({ icon: Icon, value, suffix, unit, unitColor, label, foot, pct, accent, d }) {
   const n = useCountUp(value, 1000);
   return (
     <Stat className="reveal" style={{ "--d": d }}>
       <Topline>
         <Label>{label}</Label>
-        <Icon size={18} style={{ color: accent.from }} aria-hidden="true" />
+        <Icon size={17} style={{ color: accent.from }} aria-hidden="true" />
       </Topline>
       <Num>
         {n}
         {suffix && <Suffix>{suffix}</Suffix>}
       </Num>
+      {unit && <Unit $c={unitColor}>{unit}</Unit>}
       {pct != null && (
         <Bar>
           <BarFill $pct={pct} $accent={accent} />
@@ -103,7 +114,7 @@ function StatCard({ icon: Icon, value, suffix, label, foot, pct, accent, d }) {
   );
 }
 
-export default function StatsStrip({ completedDays, currentDay, currentPhase, accent }) {
+export default function StatsStrip({ completedDays, currentDay, currentPhase, accent, nextRank }) {
   const total = Object.values(completedDays).filter(Boolean).length;
   let streak = 0;
   for (let d = currentDay; d >= 1; d--) {
@@ -123,22 +134,36 @@ export default function StatsStrip({ completedDays, currentDay, currentPhase, ac
         accent={accent}
         d=".05s"
       />
-      <StatCard
-        icon={LuCheckCircle2}
-        value={total}
-        suffix={`/ ${TOTAL_DAYS}`}
-        label="Days Conquered"
-        pct={overallPct}
-        accent={accent}
-        d=".12s"
-      />
+      {nextRank ? (
+        <StatCard
+          icon={LuMedal}
+          value={nextRank.remaining}
+          label="Next Rank"
+          unit={`days to ${nextRank.name}`}
+          unitColor={nextRank.color}
+          foot={`${total} of ${TOTAL_DAYS} conquered`}
+          pct={overallPct}
+          accent={accent}
+          d=".12s"
+        />
+      ) : (
+        <StatCard
+          icon={LuMedal}
+          value={total}
+          suffix={`/ ${TOTAL_DAYS}`}
+          label="Conquered"
+          unit="Champion — fully forged"
+          pct={100}
+          accent={accent}
+          d=".12s"
+        />
+      )}
       <StatCard
         icon={LuTrendingUp}
         value={phasePct}
         suffix="%"
         label="Phase Progress"
         pct={phasePct}
-        foot={phaseMeta[currentPhase].name}
         accent={accent}
         d=".19s"
       />

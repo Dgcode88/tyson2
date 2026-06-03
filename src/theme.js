@@ -24,6 +24,11 @@ export const theme = {
     green: "#34D399",
     greenInk: "#06281C",
     danger: "#F0506A",
+    // War red — the colour of the cold open, the oath, the bell. Blood in the canvas.
+    blood: "#E11D2A",
+    bloodSoft: "rgba(225, 29, 42, 0.16)",
+    bloodGlow: "rgba(225, 29, 42, 0.5)",
+    bone: "#EDE7DC",
     track: "rgba(255, 255, 255, 0.08)",
   },
   // Per-phase accent gradients (Demolition / Reconstruction / Weaponization)
@@ -40,6 +45,8 @@ export const theme = {
   font: {
     display: "'Archivo', system-ui, sans-serif",
     body: "'Inter', system-ui, -apple-system, sans-serif",
+    // Fight-poster brutal: condensed, single-weight, hits like a heavy bag.
+    brutal: "'Anton', 'Archivo', system-ui, sans-serif",
   },
   // Full-bleed app shell metrics
   layout: { rail: "96px", maxMain: "1760px" },
@@ -59,7 +66,8 @@ export const GlobalStyle = createGlobalStyle`
     --teal:${theme.color.teal}; --teal-soft:${theme.color.tealSoft};
     --gold:${theme.color.gold}; --gold-soft:${theme.color.goldSoft};
     --green:${theme.color.green}; --danger:${theme.color.danger}; --track:${theme.color.track};
-    --display:${theme.font.display}; --body:${theme.font.body};
+    --blood:${theme.color.blood}; --blood-soft:${theme.color.bloodSoft}; --blood-glow:${theme.color.bloodGlow}; --bone:${theme.color.bone};
+    --display:${theme.font.display}; --body:${theme.font.body}; --brutal:${theme.font.brutal};
   }
 
   html, body, #root { height: 100%; }
@@ -136,6 +144,45 @@ export const GlobalStyle = createGlobalStyle`
   .boot li.reveal-i, .boot .reveal-i { opacity: 0;
     animation: liIn .5s cubic-bezier(.22,1,.36,1) forwards; animation-delay: calc(var(--i,0) * .045s + .1s); }
   @keyframes liIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+
+  /* ══════════════════ WAR ROOM RITUAL LAYER ════════════════════════════════ */
+
+  /* Cold-open heartbeat — a slow double-thump red pulse behind the words */
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); opacity: .28; }
+    14% { transform: scale(1.12); opacity: .62; }
+    28% { transform: scale(1); opacity: .32; }
+    42% { transform: scale(1.07); opacity: .5; }
+    56% { transform: scale(1); opacity: .28; }
+  }
+
+  /* A word slamming onto the screen — overshoot, blur clearing, weight landing */
+  @keyframes impactIn {
+    0%   { opacity: 0; transform: scale(1.6); filter: blur(14px); letter-spacing: .2em; }
+    55%  { opacity: 1; filter: blur(0); }
+    70%  { transform: scale(.965); }
+    100% { opacity: 1; transform: scale(1); letter-spacing: normal; }
+  }
+
+  /* Screen recoil on a hit — tiny, fast, asymmetric so it feels like a thud */
+  @keyframes hitShake {
+    0%{transform:translate(0,0);} 20%{transform:translate(-5px,3px);} 40%{transform:translate(6px,-2px);}
+    60%{transform:translate(-4px,-3px);} 80%{transform:translate(3px,2px);} 100%{transform:translate(0,0);}
+  }
+  .hit-shake { animation: hitShake .42s cubic-bezier(.36,.07,.19,.97); }
+
+  /* The oath / lock-in stamp — slams in rotated like an ink stamp, then settles */
+  @keyframes oathStamp {
+    0%   { opacity: 0; transform: rotate(-9deg) scale(1.7); filter: blur(5px); }
+    60%  { opacity: 1; filter: blur(0); transform: rotate(-7deg) scale(.94); }
+    100% { opacity: 1; transform: rotate(-7deg) scale(1); }
+  }
+
+  /* Cold-open dissolve — the arena igniting white as you enter */
+  @keyframes igniteFlash { 0%{opacity:0;} 30%{opacity:.9;} 100%{opacity:0;} }
+
+  /* Rank-up: the identity badge pulsing gold when you climb a tier */
+  @keyframes rankPop { 0%{transform:scale(1);} 40%{transform:scale(1.18);} 100%{transform:scale(1);} }
 
   /* Honour reduced-motion everywhere. */
   @media (prefers-reduced-motion: reduce) {
