@@ -27,3 +27,7 @@ yarn-error.log*
 # local agent + private design working files
 .claude/
 Tyson Transformation Design System/
+
+# local QA / screenshot artifacts (not part of the app)
+/*.jpeg
+.playwright-mcp/
