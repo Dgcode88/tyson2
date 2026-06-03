@@ -1,12 +1,6 @@
 {
-  "buildCommand": "npm install && npm install cross-env --no-save && npm run build",
-  "outputDirectory": "build",
-  "framework": "create-react-app",
-  "routes": [
-    { "src": "/static/(.*)", "dest": "/static/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/manifest.json", "dest": "/manifest.json" },
-    { "src": "/asset-manifest.json", "dest": "/asset-manifest.json" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
-} 
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
