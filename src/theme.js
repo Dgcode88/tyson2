@@ -15,7 +15,10 @@ export const theme = {
     borderStrong: "rgba(255, 255, 255, 0.16)",
     text: "#F5F7FA",
     textMuted: "#9AA4B2",
-    textDim: "#646E7E",
+    // Lightened from #646E7E (~3.4:1, sub-AA) to ~4.7:1 so every micro-label,
+    // eyebrow and time stamp clears WCAG AA — still a distinct dim tier below
+    // textMuted, just no longer illegible dim-on-dark.
+    textDim: "#828B99",
     teal: "#2DD4BF",
     tealSoft: "rgba(45, 212, 191, 0.14)",
     tealInk: "#052B27",
@@ -31,11 +34,15 @@ export const theme = {
     bone: "#EDE7DC",
     track: "rgba(255, 255, 255, 0.08)",
   },
-  // Per-phase accent gradients (Demolition / Reconstruction / Weaponization)
+  // Per-phase accent gradients (Demolition / Reconstruction / Weaponization).
+  // `from`→`to` is the saturated version for rings, bars and glows. `textTo` is a
+  // lighter far-stop used ONLY when the gradient fills TEXT (background-clip), so
+  // the giant phase names clear contrast instead of fading into a ~3.3:1 dark end.
+  // Every phase MUST define textTo — consumers use it directly, no fallback.
   phase: {
-    1: { from: "#FB7185", to: "#E11D48", glow: "rgba(225, 29, 72, 0.45)" },
-    2: { from: "#38BDF8", to: "#2563EB", glow: "rgba(37, 99, 235, 0.45)" },
-    3: { from: "#A78BFA", to: "#7C3AED", glow: "rgba(124, 58, 237, 0.45)" },
+    1: { from: "#FB7185", to: "#E11D48", textTo: "#F43F5E", glow: "rgba(225, 29, 72, 0.45)" },
+    2: { from: "#38BDF8", to: "#2563EB", textTo: "#3B82F6", glow: "rgba(37, 99, 235, 0.45)" },
+    3: { from: "#A78BFA", to: "#7C3AED", textTo: "#8B5CF6", glow: "rgba(124, 58, 237, 0.45)" },
   },
   radius: { sm: "10px", md: "14px", lg: "18px", pill: "999px" },
   shadow: {
@@ -43,9 +50,14 @@ export const theme = {
     raised: "0 24px 60px -28px rgba(0,0,0,0.95)",
   },
   font: {
+    // Two-tier display system. `display` (Archivo 600–900) is the everyday
+    // heading + big-numeric voice — panel titles, the ring number, stat numbers,
+    // the day stamp, legend names. `brutal` (Anton) is deliberately RESERVED for
+    // full-screen/overlay "moment" typography — the cold-open walkout, the
+    // rank-up toast, the Day-90 FORGED screen — and never sits in the persistent
+    // dashboard next to Archivo numerals.
     display: "'Archivo', system-ui, sans-serif",
     body: "'Inter', system-ui, -apple-system, sans-serif",
-    // Fight-poster brutal: condensed, single-weight, hits like a heavy bag.
     brutal: "'Anton', 'Archivo', system-ui, sans-serif",
   },
   // Full-bleed app shell metrics
@@ -54,6 +66,12 @@ export const theme = {
 
 // Helper: resolve a phase's accent (defaults to phase 1 if out of range).
 export const phaseAccent = (phase) => theme.phase[phase] || theme.phase[1];
+
+// The near-black, blood-tinged arena backdrop shared by the cold-open walkout
+// and the crash screen. A plain module constant (not a theme token) so the
+// ErrorBoundary can use it without a working ThemeProvider.
+export const arenaBg =
+  "radial-gradient(120% 100% at 50% 38%, #14060a 0%, #07070b 55%, #040406 100%)";
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after { box-sizing: border-box; }
@@ -76,13 +94,23 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: ${theme.font.body};
     background: ${theme.color.bg};
-    background-image: ${theme.color.bgGradient};
-    background-attachment: fixed;
     color: ${theme.color.text};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+  }
+
+  /* Fixed background gradient via a dedicated compositor layer instead of
+     background-attachment: fixed, which repaints the whole viewport on every
+     scroll frame (a well-known mobile jank source). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: ${theme.color.bgGradient};
+    pointer-events: none;
   }
 
   h1, h2, h3, h4 { font-family: ${theme.font.display}; margin: 0; }
@@ -100,11 +128,18 @@ export const GlobalStyle = createGlobalStyle`
 
   /* Ambient drifting light — re-tints to the active phase accent over ~1.1s */
   .ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-  .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .42;
-    mix-blend-mode: screen; transition: background 1.1s ease; will-change: transform; }
+  .ambient.paused .orb, .ambient.paused .scan { animation-play-state: paused; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(64px); opacity: .42;
+    mix-blend-mode: screen; transition: background 1.1s ease; }
   .orb-1 { width: 860px; height: 860px; top: -340px; left: 34%; margin-left: -430px; animation: drift1 24s ease-in-out infinite; }
   .orb-2 { width: 660px; height: 660px; bottom: -300px; right: -160px; animation: drift2 30s ease-in-out infinite; }
   .orb-3 { width: 520px; height: 520px; top: 40%; left: -200px; opacity: .26; animation: drift3 34s ease-in-out infinite; }
+  /* Phones do the most compositing work for the least visible payoff: drop the
+     third orb and soften the blur so the glass cards have less to re-sample. */
+  @media (max-width: 900px) {
+    .orb-3 { display: none; }
+    .orb { filter: blur(54px); }
+  }
   @keyframes drift1 { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(46px) scale(1.08);} }
   @keyframes drift2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-64px,-34px) scale(1.13);} }
   @keyframes drift3 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(54px,-44px);} }
@@ -125,8 +160,8 @@ export const GlobalStyle = createGlobalStyle`
 
   /* Day-complete spark burst */
   .burst { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 5; }
-  .spark { position: absolute; width: 9px; height: 9px; border-radius: 50%;
-    animation: spark .72s cubic-bezier(.2,.8,.3,1) forwards; }
+  .spark { position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    animation: spark .95s cubic-bezier(.2,.8,.3,1) forwards; }
   @keyframes spark { 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--x),var(--y)) scale(.2);opacity:0;} }
 
   /* Entrance choreography — only hidden during the self-healing boot window */

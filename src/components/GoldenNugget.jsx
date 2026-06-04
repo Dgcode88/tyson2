@@ -14,7 +14,7 @@ const Card = styled.figure`
   background:
     radial-gradient(120% 140% at 50% 0%, rgba(245, 182, 67, 0.1), transparent 60%),
     ${({ theme }) => theme.color.surface};
-  box-shadow: ${({ theme }) => theme.shadow.card}, 0 0 60px -36px ${({ theme }) => theme.color.gold};
+  box-shadow: ${({ theme }) => theme.shadow.card}, 0 0 40px -42px ${({ theme }) => theme.color.gold};
   text-align: center;
 `;
 
@@ -63,7 +63,8 @@ const Rule = styled.span`
 `;
 
 const Name = styled.span`
-  font-family: ${({ theme }) => theme.font.brutal};
+  font-family: ${({ theme }) => theme.font.display};
+  font-weight: 900;
   font-size: clamp(17px, 1.8vw, 22px);
   letter-spacing: 0.02em;
   text-transform: uppercase;

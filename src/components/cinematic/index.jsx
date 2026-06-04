@@ -41,8 +41,17 @@ export function useCountUp(target, duration = 900) {
 // Three drifting, phase-tinted orbs + scanline + grain + vignette behind all
 // content. The orbs cross-fade to the new accent when the phase changes.
 export function Ambient({ accent }) {
+  // Pause the drifting orbs + scanline while the tab is backgrounded so we don't
+  // burn the GPU (and the user's battery) animating something nobody can see.
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    const onVis = () => setPaused(document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
   return (
-    <div className="ambient" aria-hidden="true">
+    <div className={`ambient${paused ? " paused" : ""}`} aria-hidden="true">
       <div className="orb orb-1" style={{ background: `radial-gradient(circle, ${accent.from}, transparent 70%)` }} />
       <div className="orb orb-2" style={{ background: `radial-gradient(circle, ${accent.to}, transparent 70%)` }} />
       <div className="orb orb-3" style={{ background: `radial-gradient(circle, ${accent.from}, transparent 70%)` }} />
@@ -69,13 +78,15 @@ export function PhaseFlash({ nonce, accent }) {
 }
 
 // ── Day-complete burst ────────────────────────────────────────────────────────
-// 14 sparks radiating from the ring in teal / gold / green / white.
+// The reward for locking in a day: sparks radiating from the ring in
+// green / teal / gold / white. The single most important moment in the app, so
+// it throws wide and bright.
 export function Burst({ nonce }) {
   if (!nonce) return null;
   const colors = ["#34D399", "#2DD4BF", "#F5B643", "#F5F7FA"];
-  const sparks = Array.from({ length: 14 }, (_, i) => {
-    const a = (i / 14) * Math.PI * 2;
-    const dist = 64 + (i % 3) * 24;
+  const sparks = Array.from({ length: 22 }, (_, i) => {
+    const a = (i / 22) * Math.PI * 2;
+    const dist = 90 + (i % 3) * 40;
     return {
       x: Math.cos(a) * dist,
       y: Math.sin(a) * dist,
@@ -93,7 +104,7 @@ export function Burst({ nonce }) {
             "--x": `${s.x}px`,
             "--y": `${s.y}px`,
             background: s.c,
-            boxShadow: `0 0 10px ${s.c}`,
+            boxShadow: `0 0 14px ${s.c}`,
             animationDelay: `${s.delay}s`,
           }}
         />

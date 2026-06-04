@@ -30,4 +30,6 @@ Tyson Transformation Design System/
 
 # local QA / screenshot artifacts (not part of the app)
 /*.jpeg
+/screenshot-*.png
+/audit/
 .playwright-mcp/

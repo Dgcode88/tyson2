@@ -20,8 +20,16 @@ const Halo = styled.div`
 
 const ringFlash = keyframes`
   0%   { filter: drop-shadow(0 0 0 transparent); }
-  30%  { filter: drop-shadow(0 0 22px #34D399); }
+  30%  { filter: drop-shadow(0 0 34px #34D399); }
   100% { filter: drop-shadow(0 0 0 transparent); }
+`;
+
+// The whole ring gives a tight physical "pump" the instant a day is locked in —
+// remounted via key={flashKey} so the scale keyframe replays on every completion.
+const PumpLayer = styled(motion.div)`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 `;
 
 const Svg = styled.svg`
@@ -89,6 +97,12 @@ export default function ProgressRing({
   return (
     <Wrap $size={size}>
       <Halo $glow={glow || `${accent.from}66`} />
+      <PumpLayer
+        key={flashKey}
+        initial={false}
+        animate={flashKey > 0 ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+        transition={{ duration: 0.42, ease: [0.2, 0.8, 0.3, 1] }}
+      >
       <Svg width={size} height={size} aria-hidden="true">
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -134,6 +148,7 @@ export default function ProgressRing({
         {big != null && <Big $size={size}>{big}</Big>}
         {small && <Small>{small}</Small>}
       </Center>
+      </PumpLayer>
     </Wrap>
   );
 }

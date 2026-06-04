@@ -3,6 +3,7 @@ import styled, { keyframes, css } from "styled-components";
 import { LuArrowRight } from "react-icons/lu";
 import { playSound } from "../hooks/useSound.js";
 import { vibrate, HAPTIC } from "../lib/haptics.js";
+import { arenaBg } from "../theme.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // THE WALKOUT — the cold open. Black, a heartbeat, the day, your war cry, then
@@ -23,7 +24,7 @@ const Screen = styled.div`
   z-index: 1000;
   display: grid;
   place-items: center;
-  background: radial-gradient(120% 100% at 50% 38%, #14060a 0%, #07070b 55%, #040406 100%);
+  background: ${arenaBg};
   overflow: hidden;
   padding: 24px;
   /* The whole screen recoils once at the very start, like the first bell. */
@@ -99,21 +100,24 @@ const DayWord = styled.span`
 const DayNum = styled.span`
   display: block;
   font-family: ${({ theme }) => theme.font.brutal};
-  font-size: clamp(96px, 24vw, 240px);
+  font-size: clamp(88px, 20vw, 200px);
   line-height: 0.82;
+  /* The 0.82 line box clips Anton's tall caps; this keeps the numeral from
+     crowding the phase word that sits directly beneath it. */
+  padding-bottom: 0.06em;
   color: ${({ theme }) => theme.color.bone};
   text-shadow: 0 0 60px ${({ theme }) => theme.color.bloodGlow};
   ${({ $reduce }) => reveal($reduce, 0.5)}
 `;
 
-const Phase = styled.h1`
-  margin: 14px 0 0;
+const Phase = styled.h2`
+  margin: clamp(10px, 3vw, 28px) 0 0;
   font-family: ${({ theme }) => theme.font.brutal};
   font-size: clamp(30px, 7vw, 76px);
   line-height: 0.92;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}, ${$accent.to})`};
+  background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}, ${$accent.textTo})`};
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -187,7 +191,7 @@ const Enter = styled.button`
       : css`
           opacity: 0;
           animation: reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.4s forwards,
-            ${enterPulse($accent)} 2.6s ease-in-out 5.4s infinite;
+            ${enterPulse($accent)} 2s ease-in-out 3s infinite;
         `}
 
   &:hover {
@@ -204,23 +208,30 @@ const Enter = styled.button`
 
 const Skip = styled.button`
   position: absolute;
-  top: max(18px, env(safe-area-inset-top, 0px));
-  right: 20px;
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: 16px;
   z-index: 3;
-  border: none;
-  background: none;
-  color: ${({ theme }) => theme.color.textDim};
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  /* A real, reachable control — not a watermark. ≥44px tap target, AA contrast. */
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.pill};
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
-  padding: 8px 10px;
-  opacity: 0.7;
-  transition: opacity 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
   &:hover {
-    opacity: 1;
     color: ${({ theme }) => theme.color.text};
+    border-color: ${({ theme }) => theme.color.borderStrong};
+    background: rgba(255, 255, 255, 0.09);
   }
 `;
 
@@ -237,6 +248,8 @@ const Ignite = styled.div`
 export default function ColdOpen({ day, phaseName, accent, tysonLine, warCry, onEnter }) {
   const [igniting, setIgniting] = useState(false);
   const done = useRef(false);
+  const screenRef = useRef(null);
+  const enterTimer = useRef(0);
 
   const enter = () => {
     if (done.current) return;
@@ -249,15 +262,40 @@ export default function ColdOpen({ day, phaseName, accent, tysonLine, warCry, on
       return;
     }
     setIgniting(true);
-    setTimeout(onEnter, 460);
+    enterTimer.current = setTimeout(onEnter, 460);
   };
 
-  // Keyboard: Enter/Space steps in, Escape skips straight through.
+  // If the walkout unmounts mid-flash, don't let the timer fire into a dead tree.
+  useEffect(() => () => clearTimeout(enterTimer.current), []);
+
+  // Keyboard: Escape skips straight through; Tab is trapped inside the dialog so
+  // focus can't wander to the dashboard rendered behind this full-screen overlay.
+  // (Enter/Space activate whichever button is focused via its native click.)
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+      if (e.key === "Escape") {
         e.preventDefault();
         enter();
+        return;
+      }
+      if (e.key === "Tab") {
+        const dialog = screenRef.current;
+        if (!dialog) return;
+        const f = dialog.querySelectorAll("button");
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        const active = document.activeElement;
+        if (!dialog.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
@@ -266,7 +304,7 @@ export default function ColdOpen({ day, phaseName, accent, tysonLine, warCry, on
   }, []);
 
   return (
-    <Screen $reduce={reduceMotion} role="dialog" aria-label="Enter the arena">
+    <Screen ref={screenRef} $reduce={reduceMotion} role="dialog" aria-modal="true" aria-label="Enter the arena">
       <Heart $reduce={reduceMotion} aria-hidden="true" />
       <Grain aria-hidden="true" />
 

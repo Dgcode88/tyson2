@@ -10,6 +10,11 @@
 
 export const TOTAL_DAYS = 90;
 
+// Storage key for one checklist item on one day — the single definition shared
+// by App (toggle/reset writes) and ChecklistPanel (reads) so the format can
+// never drift between writers and readers.
+export const checklistKey = (day, id) => `${day}:${id}`;
+
 export const phaseMeta = {
   1: { name: "DEMOLITION", description: "Break down everything to rebuild stronger" },
   2: { name: "RECONSTRUCTION", description: "Build the physical weapons and fighting instincts" },

@@ -147,7 +147,8 @@ const Stamp = styled.span`
   left: 50%;
   top: -13px;
   transform: translateX(-50%);
-  font-family: ${({ theme }) => theme.font.brutal};
+  font-family: ${({ theme }) => theme.font.display};
+  font-weight: 900;
   font-size: 12px;
   letter-spacing: 0.18em;
   color: ${({ theme }) => theme.color.green};

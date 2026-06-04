@@ -82,7 +82,8 @@ const BarFill = styled.i`
   border-radius: inherit;
   width: ${({ $pct }) => $pct}%;
   background: ${({ $accent }) => `linear-gradient(90deg, ${$accent.from}, ${$accent.to})`};
-  box-shadow: 0 0 12px ${({ $accent }) => $accent.glow};
+  /* No outer glow here — the glow budget is reserved for the ring + lock-in. */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
   transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
 `;
 
@@ -116,8 +117,14 @@ function StatCard({ icon: Icon, value, suffix, unit, unitColor, label, foot, pct
 
 export default function StatsStrip({ completedDays, currentDay, currentPhase, accent, nextRank }) {
   const total = Object.values(completedDays).filter(Boolean).length;
+  // Anchor the streak to the furthest day actually locked in — not the browsing
+  // cursor — so previewing a future day no longer reports a streak of 0.
+  const conqueredDays = Object.keys(completedDays)
+    .filter((d) => completedDays[d])
+    .map(Number);
+  const anchor = conqueredDays.length ? Math.max(...conqueredDays) : 0;
   let streak = 0;
-  for (let d = currentDay; d >= 1; d--) {
+  for (let d = anchor; d >= 1; d--) {
     if (completedDays[d]) streak++;
     else break;
   }

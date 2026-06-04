@@ -24,6 +24,7 @@ import {
   getRecoveryProtocols,
   getWeeklyShoppingList,
   getDailyChecklist,
+  checklistKey,
 } from "../data/program.js";
 
 // ── shared layout helpers ─────────────────────────────────────────────────────
@@ -143,7 +144,7 @@ const PartGrid = styled.div`
   /* min(360px, 100%) so a narrow phone collapses to one full-width column
      instead of forcing the whole page wider than the viewport. */
   grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
-  gap: 2px clamp(16px, 2.5vw, 40px);
+  gap: clamp(6px, 0.8vw, 10px) clamp(16px, 2.5vw, 40px);
 `;
 
 const ScheduleRow = styled.div`
@@ -279,27 +280,24 @@ const MealFlag = styled.p`
   color: ${({ theme }) => theme.color.gold};
 `;
 
+// Resolve the banner label for a structured meal plan. Order matters: a phase-3
+// carb-load day ALSO carries `trainingDay`, so it has to be checked first or it
+// would mislabel as "TRAINING DAY NUTRITION".
+function mealFlag(mp) {
+  if (typeof mp !== "object" || mp === null) return null;
+  if (mp.carb_loadDay) return "CARB-LOAD DAY";
+  if (mp.refeedDay !== undefined) return mp.refeedDay ? "REFEED DAY" : "REGULAR DAY";
+  if (mp.feedingDay !== undefined) return mp.feedingDay ? "FEEDING DAY" : "FASTING DAY";
+  if (mp.refeeding !== undefined) return `${mp.refeeding} — ${mp.feedingWindow}`;
+  if (mp.trainingDay !== undefined)
+    return mp.trainingDay ? "TRAINING DAY NUTRITION" : "REST DAY NUTRITION";
+  return null;
+}
+
 export function NutritionPanel({ currentDay, currentPhase, accent }) {
   const p = getDailyNutritionPlan(currentDay, currentPhase);
   const mp = p.mealPlan;
-  const flag =
-    typeof mp === "object"
-      ? mp.refeedDay !== undefined
-        ? mp.refeedDay
-          ? "REFEED DAY"
-          : "REGULAR DAY"
-        : mp.feedingDay !== undefined
-        ? mp.feedingDay
-          ? "FEEDING DAY"
-          : "FASTING DAY"
-        : mp.refeeding !== undefined
-        ? `${mp.refeeding} — ${mp.feedingWindow}`
-        : mp.trainingDay !== undefined
-        ? mp.trainingDay
-          ? "TRAINING DAY NUTRITION"
-          : "REST DAY NUTRITION"
-        : null
-      : null;
+  const flag = mealFlag(mp);
 
   return (
     <Panel>
@@ -587,23 +585,24 @@ const ResetBtn = styled.button`
 
 export function ChecklistPanel({ currentDay, currentPhase, accent, checklist, onToggle, onReset }) {
   const items = getDailyChecklist(currentDay, currentPhase);
-  const done = items.filter((it) => checklist[it.id]).length;
+  // Checks are namespaced by day in App state, so read with the same key.
+  const done = items.filter((it) => checklist[checklistKey(currentDay, it.id)]).length;
   const pct = items.length ? Math.round((done / items.length) * 100) : 0;
   return (
     <Panel>
-      <Head title={`Day ${currentDay} Checklist`} sub="Track your daily completion for maximum results" />
+      <Head title={`Day ${currentDay} Checklist`} sub="Close every box. Leave nothing for tomorrow." />
       <QuoteBlock moduleId="checklist" day={currentDay} accent={accent} />
       <Progress>
         <ProgressBar>
           <ProgressFill $pct={pct} $accent={accent} />
         </ProgressBar>
-        <Done>
+        <Done aria-live="polite">
           {done} / {items.length} complete
         </Done>
       </Progress>
       <CheckGrid>
         {items.map((it, i) => {
-          const on = !!checklist[it.id];
+          const on = !!checklist[checklistKey(currentDay, it.id)];
           return (
             <Item key={`${it.id}-${i}`} onClick={() => onToggle(it.id)} aria-pressed={on}>
               <Mark $on={on}>{on ? <LuCheckCircle2 /> : <LuCircle />}</Mark>

@@ -8,19 +8,26 @@ import {
   LuPill,
   LuActivity,
   LuListChecks,
+  LuLineChart,
   LuShoppingCart,
 } from "react-icons/lu";
+import { TAB_DEFS } from "../data/tabs.js";
 
-export const TABS = [
-  { id: "schedule", label: "Schedule", Icon: LuCalendarDays, color: "#2DD4BF" },
-  { id: "training", label: "Training", Icon: LuDumbbell, color: "#FB7185" },
-  { id: "nutrition", label: "Nutrition", Icon: LuUtensils, color: "#F5B643" },
-  { id: "mindset", label: "Mindset", Icon: LuBrain, color: "#A78BFA" },
-  { id: "supplements", label: "Supplements", Icon: LuPill, color: "#34D399" },
-  { id: "recovery", label: "Recovery", Icon: LuActivity, color: "#38BDF8" },
-  { id: "checklist", label: "Checklist", Icon: LuListChecks, color: "#A3E635" },
-  { id: "shopping", label: "Shopping", Icon: LuShoppingCart, color: "#F472B6" },
-];
+// Ids/labels/colors live in src/data/tabs.js (shared with the PWA manifest
+// shortcuts in vite.config.js); only the icon components are wired up here.
+const ICONS = {
+  schedule: LuCalendarDays,
+  training: LuDumbbell,
+  nutrition: LuUtensils,
+  mindset: LuBrain,
+  supplements: LuPill,
+  recovery: LuActivity,
+  checklist: LuListChecks,
+  journey: LuLineChart,
+  shopping: LuShoppingCart,
+};
+
+export const TABS = TAB_DEFS.map((t) => ({ ...t, Icon: ICONS[t.id] }));
 
 // ── Logo mark — the progress-arc "T" from the brand kit ───────────────────────
 function LogoMark({ size = 40 }) {
@@ -153,8 +160,10 @@ const Label = styled.span`
   font-weight: 700;
   letter-spacing: 0.04em;
 
+  /* Nine tabs on a phone: the colored icons carry identity; text labels would
+     collide. The button keeps its accessible name via aria-label. */
   @media (max-width: 480px) {
-    font-size: 9px;
+    display: none;
   }
 `;
 
@@ -169,8 +178,25 @@ const Active = styled(motion.span)`
 `;
 
 export default function TabBar({ active, onChange }) {
+  // WAI-ARIA tabs keyboard model: arrows (either axis, since the rail is
+  // vertical on desktop and horizontal on mobile) + Home/End move selection and
+  // focus together. Only the active tab is in the tab order (roving tabindex).
+  const onKeyDown = (e) => {
+    const idx = TABS.findIndex((t) => t.id === active);
+    let next = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = (idx + 1) % TABS.length;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = (idx - 1 + TABS.length) % TABS.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = TABS.length - 1;
+    else return;
+    e.preventDefault();
+    const id = TABS[next].id;
+    onChange(id);
+    requestAnimationFrame(() => document.getElementById(`tab-${id}`)?.focus());
+  };
+
   return (
-    <Rail role="tablist" aria-label="Program sections">
+    <Rail role="tablist" aria-label="Program sections" aria-orientation="vertical" onKeyDown={onKeyDown}>
       <Brand>
         <LogoMark size={42} />
         <span>TYSON</span>
@@ -182,8 +208,10 @@ export default function TabBar({ active, onChange }) {
             key={id}
             role="tab"
             id={`tab-${id}`}
+            aria-label={label}
             aria-selected={isActive}
             aria-controls={`panel-${id}`}
+            tabIndex={isActive ? 0 : -1}
             $active={isActive}
             $color={color}
             onClick={() => onChange(id)}

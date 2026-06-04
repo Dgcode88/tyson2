@@ -44,6 +44,7 @@ const MODULE_THEMES = {
   supplements: ["fuel", "discipline"],
   recovery: ["suffering", "will"],
   checklist: ["discipline"],
+  journey: ["will", "victory"],
   shopping: ["discipline", "fuel"],
 };
 

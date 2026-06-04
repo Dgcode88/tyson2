@@ -6,19 +6,22 @@
     <meta name="theme-color" content="#0B0E14" />
     <meta
       name="description"
-      content="90-Day Tyson Transformation Program — build yourself into a weapon."
+      content="A 90-day transformation program: train, fuel, recover, and lock in every single day. Three phases — Demolition, Reconstruction, Weaponization."
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- iOS standalone: launch edge-to-edge in the dark shell, not inside Safari. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tyson 90" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
-    <title>90-Day Tyson Transformation</title>
+    <!-- The PWA manifest + service-worker registration are injected by
+         vite-plugin-pwa. Fonts are self-hosted (src/fonts.css), so there's no
+         render-blocking third-party request and no FOIT. -->
+
+    <title>90-Day Tyson Transformation — Forge a Weapon</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

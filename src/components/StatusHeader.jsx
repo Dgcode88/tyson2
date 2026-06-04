@@ -9,6 +9,19 @@ import DaySelector from "./DaySelector.jsx";
 import FighterSilhouette from "./FighterSilhouette.jsx";
 import { phaseMission, phaseOrder, restMission, restOrder } from "../data/creed.js";
 
+// Visually hidden but available to assistive tech (for polite live regions).
+const srOnly = {
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  padding: 0,
+  margin: "-1px",
+  overflow: "hidden",
+  clip: "rect(0, 0, 0, 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
 const Hero = styled(GlassCard)`
   position: relative;
   padding: clamp(16px, 2vw, 28px);
@@ -18,7 +31,7 @@ const Hero = styled(GlassCard)`
 // The fighter, standing in the corner of the room. Atmosphere, not illustration.
 const Ghost = styled.div`
   position: absolute;
-  right: 22%;
+  right: 14%;
   bottom: -8%;
   width: clamp(200px, 22vw, 340px);
   height: 122%;
@@ -40,7 +53,7 @@ const FloorGlow = styled.div`
   inset: auto -10% -40% -10%;
   height: 70%;
   background: radial-gradient(60% 100% at 60% 100%, ${({ $accent }) => $accent.glow}, transparent 70%);
-  opacity: 0.45;
+  opacity: 0.28;
   pointer-events: none;
 `;
 
@@ -97,10 +110,12 @@ const PhaseName = styled.h1`
   text-transform: uppercase;
   overflow-wrap: anywhere;
   margin: 0;
-  background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}, ${$accent.to})`};
+  background: ${({ $accent }) => `linear-gradient(100deg, ${$accent.from}, ${$accent.textTo})`};
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* Lifts the headline off the dark floor + the faint fighter ghost behind it. */
+  filter: drop-shadow(0 2px 22px rgba(0, 0, 0, 0.45));
   animation: stamp 0.6s cubic-bezier(0.2, 0.85, 0.25, 1);
 `;
 
@@ -339,9 +354,14 @@ export default function StatusHeader({
           <Eyebrow className="reveal" style={{ "--d": ".06s" }}>
             Today's Mission
           </Eyebrow>
-          <Meta className="reveal" style={{ "--d": ".1s" }}>
+          {/* Visible line shows the animated count-up; the live region announces
+              only the settled value so AT users don't hear every tween frame. */}
+          <Meta className="reveal" style={{ "--d": ".1s" }} aria-hidden="true">
             Phase {currentPhase} · Day {dayCount} of {totalDays} · {pctCount}% complete
           </Meta>
+          <span style={srOnly} aria-live="polite">
+            Phase {currentPhase}, day {currentDay} of {totalDays}, {overall} percent complete
+          </span>
 
           <PhaseName key={currentPhase} $accent={accent}>
             {phaseName}
