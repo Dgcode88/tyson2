@@ -106,8 +106,6 @@ const toISODate = (d) => {
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
   return local.toISOString().slice(0, 10);
 };
-const daysSince = (iso) =>
-  Math.floor((Date.now() - new Date(`${iso}T00:00:00`).getTime()) / 86400000);
 const isValidISODate = (iso) =>
   typeof iso === "string" && Number.isFinite(new Date(`${iso}T00:00:00`).getTime());
 
@@ -178,7 +176,8 @@ export default function App() {
   // Anchor the program to real calendar time. On the first run ever, pin the
   // start date so "today" equals the day the cursor is already on (this preserves
   // any existing progress instead of snapping a mid-program user back to Day 1).
-  // Then every open jumps to today's real day; the stepper still previews any day.
+  // Reopening keeps the day you were last on — the persisted currentDay is left
+  // untouched; the stepper still moves to any day.
   const anchored = useRef(false);
   useEffect(() => {
     if (anchored.current) return;
@@ -199,16 +198,15 @@ export default function App() {
       return next;
     });
 
-    let sd = startDate;
-    // A restored backup can carry a malformed date — treat it like a missing
-    // one and re-anchor, instead of letting NaN flow into the day counter.
-    if (!isValidISODate(sd)) {
+    // A missing or malformed start date (fresh install, or a restored backup
+    // carrying a bad value) gets anchored so the day you're on equals today —
+    // without letting NaN flow into the day counter. An existing valid start
+    // date is left as-is, and currentDay keeps whatever was last persisted.
+    if (!isValidISODate(startDate)) {
       const d = new Date();
       d.setDate(d.getDate() - (clamp(currentDay) - 1));
-      sd = toISODate(d);
-      setStartDate(sd);
+      setStartDate(toISODate(d));
     }
-    setCurrentDay(clamp(daysSince(sd) + 1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
